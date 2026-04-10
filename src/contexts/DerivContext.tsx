@@ -9,10 +9,12 @@ interface DerivContextType {
   isDemo: boolean;
   isGuest: boolean;
   activeSymbols: any[];
+  guestTrades: any[];
   isLoading: boolean;
   error: string | null;
   authorize: (token: string) => Promise<void>;
   setGuestMode: () => void;
+  updateGuestBalance: (amount: number, trade?: any) => void;
   logout: () => void;
 }
 
@@ -26,6 +28,7 @@ export const DerivProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isDemo, setIsDemo] = useState(true);
   const [isGuest, setIsGuest] = useState(false);
   const [activeSymbols, setActiveSymbols] = useState<any[]>([]);
+  const [guestTrades, setGuestTrades] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,13 +60,33 @@ export const DerivProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   const setGuestMode = () => {
+    const savedBalance = localStorage.getItem('deriv_guest_balance');
+    const savedTrades = localStorage.getItem('deriv_guest_trades');
     setLoginId('GUEST_TRADER');
-    setBalance(10000);
+    setBalance(savedBalance ? parseFloat(savedBalance) : 10000);
+    setGuestTrades(savedTrades ? JSON.parse(savedTrades) : []);
     setCurrency('USD');
     setIsDemo(true);
     setIsGuest(true);
     localStorage.setItem('deriv_guest', 'true');
     localStorage.removeItem('deriv_token');
+  };
+
+  const updateGuestBalance = (amount: number, trade?: any) => {
+    if (!isGuest) return;
+    setBalance(prev => {
+      const newBalance = prev + amount;
+      localStorage.setItem('deriv_guest_balance', newBalance.toString());
+      return newBalance;
+    });
+
+    if (trade) {
+      setGuestTrades(prev => {
+        const updated = [trade, ...prev].slice(0, 50);
+        localStorage.setItem('deriv_guest_trades', JSON.stringify(updated));
+        return updated;
+      });
+    }
   };
 
   const authorize = async (token: string) => {
@@ -111,10 +134,12 @@ export const DerivProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       isDemo,
       isGuest,
       activeSymbols,
+      guestTrades,
       isLoading,
       error,
       authorize,
       setGuestMode,
+      updateGuestBalance,
       logout
     }}>
       {children}

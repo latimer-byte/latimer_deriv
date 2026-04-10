@@ -79,22 +79,38 @@ class DerivService {
 
   send(request: DerivRequest): Promise<DerivResponse> {
     return new Promise((resolve, reject) => {
-      if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
-        return reject(new Error('WebSocket not connected'));
-      }
-
-      const reqId = (++this.messageId).toString();
-      const payload = { ...request, req_id: reqId };
-
-      this.callbacks.set(reqId, (response) => {
-        if (response.error) {
-          reject(response.error);
-        } else {
-          resolve(response);
+      const executeSend = () => {
+        if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+          return reject(new Error('WebSocket not connected'));
         }
-      });
 
-      this.socket.send(JSON.stringify(payload));
+        const reqId = (++this.messageId).toString();
+        const payload = { ...request, req_id: reqId };
+
+        this.callbacks.set(reqId, (response) => {
+          if (response.error) {
+            reject(response.error);
+          } else {
+            resolve(response);
+          }
+        });
+
+        this.socket.send(JSON.stringify(payload));
+      };
+
+      if (this.socket && this.socket.readyState === WebSocket.CONNECTING) {
+        const checkConnection = setInterval(() => {
+          if (this.socket?.readyState === WebSocket.OPEN) {
+            clearInterval(checkConnection);
+            executeSend();
+          } else if (this.socket?.readyState === WebSocket.CLOSED) {
+            clearInterval(checkConnection);
+            reject(new Error('WebSocket closed while connecting'));
+          }
+        }, 100);
+      } else {
+        executeSend();
+      }
     });
   }
 

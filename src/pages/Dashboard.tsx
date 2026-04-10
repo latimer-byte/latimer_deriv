@@ -59,8 +59,15 @@ const StatCard = ({ title, value, change, icon: Icon, trend }: any) => (
 );
 
 export const Dashboard: React.FC = () => {
-  const { balance, currency, loginId } = useDeriv();
+  const { balance, currency, loginId, isGuest, guestTrades } = useDeriv();
   const navigate = useNavigate();
+
+  const displayTrades = isGuest ? guestTrades : [
+    { pair: 'BTC/USD', type: 'Buy', amount: '+0.024', status: 'Profit', price: '$64,200', time: '2h ago' },
+    { pair: 'ETH/USD', type: 'Sell', amount: '-1.50', status: 'Loss', price: '$3,450', time: '4h ago' },
+    { pair: 'GOLD', type: 'Buy', amount: '+10.0', status: 'Profit', price: '$2,150', time: '6h ago' },
+    { pair: 'EUR/USD', type: 'Buy', amount: '+500', status: 'Profit', price: '1.0850', time: '1d ago' },
+  ];
 
   return (
     <div className="space-y-8">
@@ -241,12 +248,7 @@ export const Dashboard: React.FC = () => {
             <button className="text-brand-amber text-sm font-bold hover:underline">View All</button>
           </div>
           <div className="space-y-4">
-            {[
-              { pair: 'BTC/USD', type: 'Buy', amount: '+0.024', status: 'Profit', price: '$64,200' },
-              { pair: 'ETH/USD', type: 'Sell', amount: '-1.50', status: 'Loss', price: '$3,450' },
-              { pair: 'GOLD', type: 'Buy', amount: '+10.0', status: 'Profit', price: '$2,150' },
-              { pair: 'EUR/USD', type: 'Buy', amount: '+500', status: 'Profit', price: '1.0850' },
-            ].map((trade, i) => (
+            {displayTrades.slice(0, 4).map((trade, i) => (
               <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-all group cursor-pointer">
                 <div className="flex items-center gap-3">
                   <div className={cn(
@@ -258,7 +260,7 @@ export const Dashboard: React.FC = () => {
                   <div>
                     <p className="font-bold text-gray-900">{trade.pair}</p>
                     <p className="text-xs text-gray-500 flex items-center gap-1">
-                      <Clock className="w-3 h-3" /> 2h ago
+                      <Clock className="w-3 h-3" /> {trade.time.includes('ago') ? trade.time : new Date(trade.time).toLocaleTimeString()}
                     </p>
                   </div>
                 </div>

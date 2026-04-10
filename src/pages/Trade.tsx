@@ -23,7 +23,7 @@ import { cn, formatCurrency } from '@/lib/utils';
 import { motion } from 'motion/react';
 
 export const Trade: React.FC = () => {
-  const { activeSymbols, balance, currency, loginId } = useDeriv();
+  const { activeSymbols, balance, currency, loginId, isGuest, updateGuestBalance } = useDeriv();
   const [selectedSymbol, setSelectedSymbol] = useState('R_100');
   const [ticks, setTicks] = useState<any[]>([]);
   const [amount, setAmount] = useState(10);
@@ -65,12 +65,54 @@ export const Trade: React.FC = () => {
   }, [selectedSymbol]);
 
   const handleTrade = async (type: 'CALL' | 'PUT') => {
+    if (amount > balance) {
+      alert('Insufficient balance');
+      return;
+    }
+
     setIsTrading(true);
     try {
-      // In a real app, you'd call buy here
-      // const response = await deriv.send({ buy: '...', price: amount });
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      alert(`Trade placed: ${type} on ${selectedSymbol} for ${formatCurrency(amount, currency)}`);
+      if (isGuest) {
+        // Deduct stake immediately
+        updateGuestBalance(-amount);
+        
+        const entryPrice = ticks[ticks.length - 1]?.value || 0;
+        
+        // Simulate trade duration (2 seconds for demo)
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Determine win/loss randomly for demo, or based on price if available
+        // For a better demo feel, let's use a 55% win rate
+        const isWin = Math.random() > 0.45;
+        const payout = amount * 1.95;
+        
+        if (isWin) {
+          updateGuestBalance(payout, {
+            pair: selectedSymbol,
+            type: type === 'CALL' ? 'Buy' : 'Sell',
+            amount: `+${formatCurrency(payout - amount, currency)}`,
+            status: 'Profit',
+            price: entryPrice.toFixed(2),
+            time: new Date().toISOString()
+          });
+          alert(`Trade Won! ${type} on ${selectedSymbol}. Payout: ${formatCurrency(payout, currency)}`);
+        } else {
+          updateGuestBalance(0, {
+            pair: selectedSymbol,
+            type: type === 'CALL' ? 'Buy' : 'Sell',
+            amount: `-${formatCurrency(amount, currency)}`,
+            status: 'Loss',
+            price: entryPrice.toFixed(2),
+            time: new Date().toISOString()
+          });
+          alert(`Trade Lost. ${type} on ${selectedSymbol}. Loss: ${formatCurrency(amount, currency)}`);
+        }
+      } else {
+        // In a real app, you'd call buy here
+        // const response = await deriv.send({ buy: '...', price: amount });
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        alert(`Trade placed: ${type} on ${selectedSymbol} for ${formatCurrency(amount, currency)}`);
+      }
     } catch (err: any) {
       alert(err.message || 'Trade failed');
     } finally {

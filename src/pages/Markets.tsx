@@ -7,7 +7,8 @@ import {
   BarChart3, 
   Zap, 
   Globe,
-  Star
+  Star,
+  AlertCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
@@ -15,13 +16,14 @@ import { useNavigate } from 'react-router-dom';
 const categories = [
   { id: 'all', label: 'All Markets', icon: Globe },
   { id: 'forex', label: 'Forex', icon: TrendingUp },
-  { id: 'indices', label: 'Derived Indices', icon: Zap },
+  { id: 'synthetic_index', label: 'Derived Indices', icon: Zap },
+  { id: 'indices', label: 'Stock Indices', icon: BarChart3 },
   { id: 'commodities', label: 'Commodities', icon: BarChart3 },
-  { id: 'crypto', label: 'Cryptocurrencies', icon: TrendingUp },
+  { id: 'cryptocurrency', label: 'Cryptocurrencies', icon: TrendingUp },
 ];
 
 export const Markets: React.FC = () => {
-  const { activeSymbols } = useDeriv();
+  const { activeSymbols, isLoading, error } = useDeriv();
   const [activeCategory, setActiveCategory] = React.useState('all');
   const [searchQuery, setSearchQuery] = React.useState('');
   const navigate = useNavigate();
@@ -29,9 +31,46 @@ export const Markets: React.FC = () => {
   const filteredSymbols = activeSymbols.filter(s => {
     const matchesSearch = s.display_name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                          s.symbol.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = activeCategory === 'all' || s.market === activeCategory;
+    
+    // Flexible category matching
+    let matchesCategory = activeCategory === 'all';
+    if (!matchesCategory) {
+      if (activeCategory === 'synthetic_index') {
+        matchesCategory = s.market === 'synthetic_index' || s.market === 'indices';
+      } else if (activeCategory === 'cryptocurrency') {
+        matchesCategory = s.market === 'cryptocurrency' || s.market === 'crypto';
+      } else {
+        matchesCategory = s.market === activeCategory;
+      }
+    }
+    
     return matchesSearch && matchesCategory;
   });
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 space-y-4">
+        <div className="w-12 h-12 border-4 border-brand-amber border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-gray-500 font-medium">Loading markets...</p>
+      </div>
+    );
+  }
+
+  if (error && activeSymbols.length === 0) {
+    return (
+      <div className="text-center py-20 glass-card bg-red-50 border-red-100">
+        <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+        <h3 className="text-xl text-red-900 font-bold">Connection Error</h3>
+        <p className="text-red-600 mt-2">{error}</p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="mt-6 px-6 py-2 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-all"
+        >
+          Retry Connection
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -122,6 +161,12 @@ export const Markets: React.FC = () => {
             <Globe className="w-16 h-16 text-gray-200 mx-auto mb-4" />
             <h3 className="text-xl text-gray-900">No markets found</h3>
             <p className="text-gray-500">Try adjusting your search or category filters.</p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="mt-6 px-6 py-2 bg-brand-amber text-white rounded-xl font-bold hover:bg-brand-amber/90 transition-all"
+            >
+              Refresh Markets
+            </button>
           </div>
         )}
       </div>
