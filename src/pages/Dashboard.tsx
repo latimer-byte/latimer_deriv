@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDeriv } from '@/contexts/DerivContext';
 import { 
   TrendingUp, 
@@ -7,7 +8,8 @@ import {
   ArrowUpRight, 
   ArrowDownRight,
   Clock,
-  ChevronRight
+  ChevronRight,
+  Rocket
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { 
@@ -57,9 +59,32 @@ const StatCard = ({ title, value, change, icon: Icon, trend }: any) => (
 
 export const Dashboard: React.FC = () => {
   const { balance, currency } = useDeriv();
+  const navigate = useNavigate();
 
   return (
     <div className="space-y-8">
+      {/* Roadmap Teaser */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        onClick={() => navigate('/roadmap')}
+        className="glass-card p-6 bg-brand-terracotta text-white flex flex-col md:flex-row items-center justify-between gap-6 cursor-pointer hover:shadow-2xl transition-all overflow-hidden relative group"
+      >
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl group-hover:scale-110 transition-transform" />
+        <div className="flex items-center gap-6 relative z-10">
+          <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center">
+            <Rocket className="w-8 h-8 text-white" />
+          </div>
+          <div>
+            <h3 className="text-2xl font-serif">The Road to Unicorn</h3>
+            <p className="text-white/80">Explore our 3-year product vision and global expansion strategy.</p>
+          </div>
+        </div>
+        <button className="px-8 py-3 bg-white text-brand-terracotta rounded-xl font-bold shadow-xl relative z-10 whitespace-nowrap">
+          View Roadmap
+        </button>
+      </motion.div>
+
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>

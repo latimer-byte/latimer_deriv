@@ -9,7 +9,8 @@ import {
   User,
   LogOut,
   Menu,
-  X
+  X,
+  Rocket
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useDeriv } from '@/contexts/DerivContext';
@@ -21,6 +22,7 @@ const navItems = [
   { icon: Wallet, label: 'Funds', path: '/funds' },
   { icon: History, label: 'History', path: '/history' },
   { icon: Globe, label: 'Markets', path: '/markets' },
+  { icon: Rocket, label: 'Roadmap', path: '/roadmap' },
 ];
 
 export const Layout: React.FC = () => {
