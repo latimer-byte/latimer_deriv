@@ -73,7 +73,7 @@ export const Markets: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredSymbols.slice(0, 24).map((symbol) => (
+          {filteredSymbols.slice(0, 100).map((symbol) => (
             <div 
               key={symbol.symbol}
               onClick={() => navigate('/trade')}

@@ -197,8 +197,8 @@ export const Dashboard: React.FC = () => {
               <AreaChart data={mockChartData}>
                 <defs>
                   <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#D97706" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#D97706" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#EF4444" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#EF4444" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
@@ -224,7 +224,7 @@ export const Dashboard: React.FC = () => {
                 <Area 
                   type="monotone" 
                   dataKey="value" 
-                  stroke="#D97706" 
+                  stroke="#EF4444" 
                   strokeWidth={3}
                   fillOpacity={1} 
                   fill="url(#colorValue)" 

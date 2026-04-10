@@ -30,6 +30,8 @@ export const Trade: React.FC = () => {
   const [duration, setDuration] = useState(5);
   const [isTrading, setIsTrading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showSMA, setShowSMA] = useState(true);
+  const [showEMA, setShowEMA] = useState(false);
 
   const filteredSymbols = activeSymbols.filter(s => 
     s.display_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -41,11 +43,20 @@ export const Trade: React.FC = () => {
     // Subscribe to ticks for selected symbol
     const unsubscribe = deriv.subscribe({ ticks: selectedSymbol }, (data) => {
       setTicks(prev => {
-        const newTick = {
-          time: new Date(data.tick.epoch * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-          value: data.tick.quote
-        };
-        const updated = [...prev, newTick].slice(-20);
+        const newTickValue = data.tick.quote;
+          const newTick = {
+            time: new Date(data.tick.epoch * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+            value: newTickValue,
+            // Simple Moving Average (SMA)
+            sma: prev.length >= 10 
+              ? (prev.slice(-9).reduce((acc, t) => acc + t.value, 0) + newTickValue) / 10 
+              : newTickValue,
+            // Exponential Moving Average (EMA)
+            ema: prev.length > 0
+              ? (newTickValue * (2 / (10 + 1))) + (prev[prev.length - 1].ema * (1 - (2 / (10 + 1))))
+              : newTickValue
+          };
+          const updated = [...prev, newTick].slice(-50);
         return updated;
       });
     });
@@ -160,9 +171,24 @@ export const Trade: React.FC = () => {
               </div>
             </div>
             <div className="flex gap-2">
-              {['1m', '5m', '15m', '1h'].map(t => (
-                <button key={t} className="px-3 py-1 text-xs font-bold rounded-lg border border-gray-200 hover:bg-gray-50">{t}</button>
-              ))}
+              <button 
+                onClick={() => setShowSMA(!showSMA)}
+                className={cn(
+                  "px-3 py-1 text-[10px] font-bold rounded-lg border transition-all",
+                  showSMA ? "bg-brand-amber text-white border-brand-amber" : "bg-white text-gray-500 border-gray-200"
+                )}
+              >
+                SMA (10)
+              </button>
+              <button 
+                onClick={() => setShowEMA(!showEMA)}
+                className={cn(
+                  "px-3 py-1 text-[10px] font-bold rounded-lg border transition-all",
+                  showEMA ? "bg-brand-forest text-white border-brand-forest" : "bg-white text-gray-500 border-gray-200"
+                )}
+              >
+                EMA (10)
+              </button>
             </div>
           </div>
 
@@ -194,11 +220,32 @@ export const Trade: React.FC = () => {
                 <Line 
                   type="monotone" 
                   dataKey="value" 
-                  stroke="#D97706" 
+                  stroke="#EF4444" 
                   strokeWidth={2} 
                   dot={false}
                   animationDuration={300}
                 />
+                {showSMA && (
+                  <Line 
+                    type="monotone" 
+                    dataKey="sma" 
+                    stroke="#991B1B" 
+                    strokeWidth={1} 
+                    strokeDasharray="5 5"
+                    dot={false}
+                    animationDuration={0}
+                  />
+                )}
+                {showEMA && (
+                  <Line 
+                    type="monotone" 
+                    dataKey="ema" 
+                    stroke="#1E1B4B" 
+                    strokeWidth={1} 
+                    dot={false}
+                    animationDuration={0}
+                  />
+                )}
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -253,7 +300,7 @@ export const Trade: React.FC = () => {
               className="w-full py-4 bg-green-600 text-white rounded-2xl font-bold shadow-lg shadow-green-600/20 hover:bg-green-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
             >
               <TrendingUp className="w-5 h-5" />
-              Rise / Higher
+              Buy / Rise
             </button>
             <button 
               disabled={isTrading}
@@ -261,7 +308,7 @@ export const Trade: React.FC = () => {
               className="w-full py-4 bg-red-600 text-white rounded-2xl font-bold shadow-lg shadow-red-600/20 hover:bg-red-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
             >
               <TrendingDown className="w-5 h-5" />
-              Fall / Lower
+              Sell / Fall
             </button>
           </div>
 
