@@ -9,12 +9,14 @@ import {
   Smartphone,
   CheckCircle2,
   AlertCircle,
-  LogOut
+  LogOut,
+  Zap
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { motion } from 'motion/react';
 
 export const Profile: React.FC = () => {
-  const { loginId, currency, isDemo, authorize, logout } = useDeriv();
+  const { loginId, currency, isDemo, isGuest, authorize, setGuestMode, logout } = useDeriv();
   const [token, setToken] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
@@ -37,17 +39,66 @@ export const Profile: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto space-y-8 pb-20">
       <div className="flex items-center justify-between">
         <h2 className="text-4xl text-brand-terracotta">Account Settings</h2>
-        <button 
-          onClick={logout}
-          className="px-4 py-2 text-red-500 font-bold hover:bg-red-50 rounded-xl transition-all flex items-center gap-2"
-        >
-          <LogOut className="w-5 h-5" />
-          Logout
-        </button>
+        {loginId && (
+          <button 
+            onClick={logout}
+            className="px-4 py-2 text-red-500 font-bold hover:bg-red-50 rounded-xl transition-all flex items-center gap-2"
+          >
+            <LogOut className="w-5 h-5" />
+            Logout
+          </button>
+        )}
       </div>
+
+      {!loginId && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-card p-8 bg-brand-amber text-white space-y-6"
+          >
+            <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center">
+              <Zap className="w-8 h-8" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-serif">Try Demo Mode</h3>
+              <p className="text-white/80 mt-2">Get $10,000 in virtual funds to practice your trading strategies without any risk.</p>
+            </div>
+            <button 
+              onClick={setGuestMode}
+              className="w-full py-4 bg-white text-brand-amber rounded-2xl font-bold shadow-xl hover:bg-gray-50 transition-all"
+            >
+              Start Demo Trading
+            </button>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="glass-card p-8 bg-brand-forest text-white space-y-6"
+          >
+            <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center">
+              <User className="w-8 h-8" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-serif">Create Deriv Account</h3>
+              <p className="text-white/80 mt-2">Don't have a Deriv account? Sign up now to get your API token and start real trading.</p>
+            </div>
+            <a 
+              href="https://deriv.com/signup/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="block w-full py-4 bg-brand-amber text-white text-center rounded-2xl font-bold shadow-xl hover:bg-brand-amber/90 transition-all"
+            >
+              Sign Up on Deriv
+            </a>
+          </motion.div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Sidebar */}
@@ -144,7 +195,9 @@ export const Profile: React.FC = () => {
               </div>
               <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
                 <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Account Type</p>
-                <p className="font-bold text-gray-900">{isDemo ? 'Demo / Virtual' : 'Real Account'}</p>
+                <p className="font-bold text-gray-900">
+                  {isGuest ? 'Guest Demo' : isDemo ? 'Demo / Virtual' : 'Real Account'}
+                </p>
               </div>
               <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
                 <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Status</p>

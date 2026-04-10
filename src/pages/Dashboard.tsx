@@ -72,7 +72,7 @@ export const Dashboard: React.FC = () => {
         >
           <div className="space-y-4 text-center md:text-left">
             <h2 className="text-4xl">Start Your Trading Journey</h2>
-            <p className="text-white/80 text-lg max-w-xl">Join thousands of African traders. Connect your Deriv account now to access live markets, local payments, and gamified rewards.</p>
+            <p className="text-white/80 text-lg max-w-xl">Join thousands of African traders. Try our $10,000 Demo account or connect your Deriv account for real trading.</p>
             <div className="flex flex-wrap gap-4 justify-center md:justify-start">
               <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full text-sm">
                 <CheckCircle2 className="w-4 h-4 text-white" /> Instant Deposits
@@ -85,12 +85,21 @@ export const Dashboard: React.FC = () => {
               </div>
             </div>
           </div>
-          <button 
-            onClick={() => navigate('/profile')}
-            className="px-10 py-5 bg-white text-brand-terracotta rounded-2xl font-bold text-xl shadow-xl hover:bg-gray-50 transition-all whitespace-nowrap"
-          >
-            Connect Account
-          </button>
+          <div className="flex flex-col gap-3 w-full md:w-auto">
+            <button 
+              onClick={() => navigate('/profile')}
+              className="px-10 py-5 bg-white text-brand-terracotta rounded-2xl font-bold text-xl shadow-xl hover:bg-gray-50 transition-all whitespace-nowrap"
+            >
+              Login / Connect
+            </button>
+            <a 
+              href="https://deriv.com/signup/" 
+              target="_blank"
+              className="px-10 py-3 bg-white/10 text-white border border-white/20 rounded-xl font-bold text-center hover:bg-white/20 transition-all"
+            >
+              Sign Up
+            </a>
+          </div>
         </motion.div>
       )}
 

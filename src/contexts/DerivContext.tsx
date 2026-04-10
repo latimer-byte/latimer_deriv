@@ -7,10 +7,12 @@ interface DerivContextType {
   currency: string;
   loginId: string;
   isDemo: boolean;
+  isGuest: boolean;
   activeSymbols: any[];
   isLoading: boolean;
   error: string | null;
   authorize: (token: string) => Promise<void>;
+  setGuestMode: () => void;
   logout: () => void;
 }
 
@@ -22,6 +24,7 @@ export const DerivProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [currency, setCurrency] = useState('USD');
   const [loginId, setLoginId] = useState('');
   const [isDemo, setIsDemo] = useState(true);
+  const [isGuest, setIsGuest] = useState(false);
   const [activeSymbols, setActiveSymbols] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,8 +39,12 @@ export const DerivProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         
         // Check if we have a saved token
         const savedToken = localStorage.getItem('deriv_token');
+        const savedGuest = localStorage.getItem('deriv_guest');
+
         if (savedToken) {
           await authorize(savedToken);
+        } else if (savedGuest === 'true') {
+          setGuestMode();
         }
       } catch (err: any) {
         setError(err.message || 'Failed to connect to Deriv');
@@ -49,6 +56,16 @@ export const DerivProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     init();
   }, []);
 
+  const setGuestMode = () => {
+    setLoginId('GUEST_TRADER');
+    setBalance(10000);
+    setCurrency('USD');
+    setIsDemo(true);
+    setIsGuest(true);
+    localStorage.setItem('deriv_guest', 'true');
+    localStorage.removeItem('deriv_token');
+  };
+
   const authorize = async (token: string) => {
     setIsLoading(true);
     try {
@@ -56,7 +73,9 @@ export const DerivProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setLoginId(response.authorize.loginid);
       setCurrency(response.authorize.currency);
       setIsDemo(response.authorize.is_virtual === 1);
+      setIsGuest(false);
       localStorage.setItem('deriv_token', token);
+      localStorage.removeItem('deriv_guest');
       
       // Get balance
       const balanceResponse = await deriv.send({ balance: 1, subscribe: 1 });
@@ -78,7 +97,9 @@ export const DerivProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setLoginId('');
     setBalance(0);
     setIsDemo(true);
+    setIsGuest(false);
     localStorage.removeItem('deriv_token');
+    localStorage.removeItem('deriv_guest');
   };
 
   return (
@@ -88,10 +109,12 @@ export const DerivProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       currency,
       loginId,
       isDemo,
+      isGuest,
       activeSymbols,
       isLoading,
       error,
       authorize,
+      setGuestMode,
       logout
     }}>
       {children}

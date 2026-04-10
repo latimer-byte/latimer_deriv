@@ -26,7 +26,7 @@ const navItems = [
 ];
 
 export const Layout: React.FC = () => {
-  const { balance, currency, isDemo, loginId, logout } = useDeriv();
+  const { balance, currency, isDemo, isGuest, loginId, logout } = useDeriv();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   return (
@@ -70,15 +70,17 @@ export const Layout: React.FC = () => {
             )}
           >
             <User className="w-5 h-5" />
-            <span className="font-medium">Profile</span>
+            <span className="font-medium">{loginId ? 'Profile' : 'Login / Sign Up'}</span>
           </NavLink>
-          <button 
-            onClick={logout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all mt-2"
-          >
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium">Logout</span>
-          </button>
+          {loginId && (
+            <button 
+              onClick={logout}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all mt-2"
+            >
+              <LogOut className="w-5 h-5" />
+              <span className="font-medium">Logout</span>
+            </button>
+          )}
         </div>
       </aside>
 
@@ -124,14 +126,15 @@ export const Layout: React.FC = () => {
                 </NavLink>
               ))}
               <NavLink
-                to="/profile"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center gap-4 px-6 py-4 rounded-2xl text-lg font-medium text-gray-600"
-              >
-                <User className="w-6 h-6" />
-                Profile
-              </NavLink>
-            </nav>
+              to="/profile"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="flex items-center gap-4 px-6 py-4 rounded-2xl text-lg font-medium text-gray-600"
+            >
+              <User className="w-6 h-6" />
+              {loginId ? 'Profile' : 'Login / Sign Up'}
+            </NavLink>
+          </nav>
+          {loginId && (
             <button 
               onClick={logout}
               className="flex items-center gap-4 px-6 py-4 rounded-2xl text-lg font-medium text-red-500"
@@ -139,6 +142,7 @@ export const Layout: React.FC = () => {
               <LogOut className="w-6 h-6" />
               Logout
             </button>
+          )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -149,11 +153,15 @@ export const Layout: React.FC = () => {
         <header className="hidden md:flex items-center justify-between px-8 py-4 bg-white/50 backdrop-blur-sm border-b border-gray-200">
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-500 font-medium">Welcome back, <span className="text-gray-900">{loginId || 'Trader'}</span></span>
-            {isDemo && (
+            {isGuest ? (
+              <span className="px-2 py-0.5 bg-brand-amber/10 text-brand-amber text-[10px] font-bold uppercase tracking-wider rounded border border-brand-amber/20">
+                Guest Demo
+              </span>
+            ) : isDemo && loginId ? (
               <span className="px-2 py-0.5 bg-brand-amber/10 text-brand-amber text-[10px] font-bold uppercase tracking-wider rounded border border-brand-amber/20">
                 Demo Account
               </span>
-            )}
+            ) : null}
           </div>
           <div className="flex items-center gap-6">
             <div className="text-right">
