@@ -1,0 +1,5 @@
+{
+  "name": "AfriTrade",
+  "description": "A game-themed online trading platform powered by the Deriv API, featuring African-inspired design and local payment integrations.",
+  "requestFramePermissions": []
+}
