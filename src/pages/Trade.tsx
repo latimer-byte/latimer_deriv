@@ -23,14 +23,21 @@ import { cn, formatCurrency } from '@/lib/utils';
 import { motion } from 'motion/react';
 
 export const Trade: React.FC = () => {
-  const { activeSymbols, balance, currency } = useDeriv();
+  const { activeSymbols, balance, currency, loginId } = useDeriv();
   const [selectedSymbol, setSelectedSymbol] = useState('R_100');
   const [ticks, setTicks] = useState<any[]>([]);
   const [amount, setAmount] = useState(10);
   const [duration, setDuration] = useState(5);
   const [isTrading, setIsTrading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredSymbols = activeSymbols.filter(s => 
+    s.display_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    s.symbol.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
+    if (!loginId) return;
     // Subscribe to ticks for selected symbol
     const unsubscribe = deriv.subscribe({ ticks: selectedSymbol }, (data) => {
       setTicks(prev => {
@@ -64,39 +71,62 @@ export const Trade: React.FC = () => {
   const priceChange = ticks.length > 1 ? currentPrice - ticks[ticks.length - 2].value : 0;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-      {/* Left Column: Market Selector & Info */}
-      <div className="lg:col-span-1 space-y-6">
-        <div className="glass-card p-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input 
-              type="text" 
-              placeholder="Search markets..." 
-              className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-brand-amber/20"
-            />
-          </div>
-          <div className="mt-4 space-y-1 max-h-[400px] overflow-auto pr-2">
-            {activeSymbols.slice(0, 10).map((symbol) => (
-              <button
-                key={symbol.symbol}
-                onClick={() => setSelectedSymbol(symbol.symbol)}
-                className={cn(
-                  "w-full flex items-center justify-between p-3 rounded-xl transition-all",
-                  selectedSymbol === symbol.symbol ? "bg-brand-amber/10 text-brand-amber border border-brand-amber/20" : "hover:bg-gray-50 text-gray-600"
-                )}
-              >
-                <div className="text-left">
-                  <p className="font-bold text-sm">{symbol.display_name}</p>
-                  <p className="text-[10px] uppercase tracking-wider opacity-60">{symbol.market_display_name}</p>
-                </div>
-                {selectedSymbol === symbol.symbol && <Zap className="w-4 h-4 fill-current" />}
-              </button>
-            ))}
+    <div className="relative">
+      {!loginId && (
+        <div className="absolute inset-0 z-40 flex items-center justify-center bg-brand-earth/60 backdrop-blur-md rounded-3xl border-2 border-dashed border-brand-amber/30">
+          <div className="text-center space-y-6 max-w-md p-8 glass-card">
+            <div className="w-20 h-20 rounded-3xl bg-brand-amber/10 flex items-center justify-center mx-auto">
+              <Zap className="text-brand-amber w-10 h-10" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-serif text-brand-terracotta">Connect to Trade</h3>
+              <p className="text-gray-500 mt-2">You need to connect your Deriv account to access live markets and place trades.</p>
+            </div>
+            <button 
+              onClick={() => window.location.href = '/profile'}
+              className="w-full py-4 bg-brand-amber text-white rounded-2xl font-bold shadow-lg shadow-brand-amber/20 hover:bg-brand-amber/90 transition-all"
+            >
+              Go to Profile
+            </button>
           </div>
         </div>
+      )}
 
-        <div className="glass-card p-6 bg-brand-forest text-white">
+      <div className={cn("grid grid-cols-1 lg:grid-cols-4 gap-8", !loginId && "opacity-20 pointer-events-none grayscale")}>
+        {/* Left Column: Market Selector & Info */}
+        <div className="lg:col-span-1 space-y-6">
+          <div className="glass-card p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input 
+                type="text" 
+                placeholder="Search markets..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-brand-amber/20"
+              />
+            </div>
+            <div className="mt-4 space-y-1 max-h-[400px] overflow-auto pr-2">
+              {filteredSymbols.slice(0, 20).map((symbol) => (
+                <button
+                  key={symbol.symbol}
+                  onClick={() => setSelectedSymbol(symbol.symbol)}
+                  className={cn(
+                    "w-full flex items-center justify-between p-3 rounded-xl transition-all",
+                    selectedSymbol === symbol.symbol ? "bg-brand-amber/10 text-brand-amber border border-brand-amber/20" : "hover:bg-gray-50 text-gray-600"
+                  )}
+                >
+                  <div className="text-left">
+                    <p className="font-bold text-sm">{symbol.display_name}</p>
+                    <p className="text-[10px] uppercase tracking-wider opacity-60">{symbol.market_display_name}</p>
+                  </div>
+                  {selectedSymbol === symbol.symbol && <Zap className="w-4 h-4 fill-current" />}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="glass-card p-6 bg-brand-forest text-white">
           <div className="flex items-center gap-2 mb-4">
             <ShieldCheck className="w-5 h-5 text-brand-amber" />
             <h4 className="font-bold">Safe Trading</h4>
@@ -248,5 +278,6 @@ export const Trade: React.FC = () => {
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Wallet, 
   ArrowUpCircle, 
@@ -7,10 +7,12 @@ import {
   Building2, 
   CreditCard,
   Bitcoin,
-  ChevronRight
+  ChevronRight,
+  X,
+  CheckCircle2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 
 const paymentMethods = [
   { id: 'mpesa', name: 'M-Pesa', icon: Smartphone, color: 'bg-green-600', description: 'Instant deposit via Safaricom' },
@@ -23,6 +25,23 @@ const paymentMethods = [
 
 export const Funds: React.FC = () => {
   const [activeTab, setActiveTab] = React.useState<'deposit' | 'withdraw'>('deposit');
+  const [selectedMethod, setSelectedMethod] = useState<any>(null);
+  const [amount, setAmount] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleAction = () => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      setIsProcessing(false);
+      setIsSuccess(true);
+      setTimeout(() => {
+        setIsSuccess(false);
+        setSelectedMethod(null);
+        setAmount('');
+      }, 2000);
+    }, 1500);
+  };
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
@@ -61,6 +80,7 @@ export const Funds: React.FC = () => {
           <motion.div
             key={method.id}
             whileHover={{ scale: 1.02 }}
+            onClick={() => setSelectedMethod(method)}
             className="glass-card p-6 flex items-center justify-between group cursor-pointer"
           >
             <div className="flex items-center gap-4">
@@ -78,6 +98,66 @@ export const Funds: React.FC = () => {
           </motion.div>
         ))}
       </div>
+
+      {/* Action Modal */}
+      <AnimatePresence>
+        {selectedMethod && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl relative"
+            >
+              <button 
+                onClick={() => setSelectedMethod(null)}
+                className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full"
+              >
+                <X className="w-6 h-6" />
+              </button>
+
+              <div className="text-center space-y-6">
+                <div className={cn("w-20 h-20 rounded-3xl mx-auto flex items-center justify-center text-white shadow-xl", selectedMethod.color)}>
+                  <selectedMethod.icon className="w-10 h-10" />
+                </div>
+                
+                <div>
+                  <h3 className="text-2xl font-serif text-brand-terracotta capitalize">{activeTab} via {selectedMethod.name}</h3>
+                  <p className="text-gray-500 text-sm mt-1">Enter the amount you wish to {activeTab}.</p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gray-400">$</span>
+                    <input 
+                      type="number" 
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      placeholder="0.00"
+                      className="w-full bg-gray-50 border border-gray-200 rounded-2xl py-4 pl-10 pr-4 text-xl font-bold outline-none focus:ring-2 focus:ring-brand-amber/20"
+                    />
+                  </div>
+
+                  {isSuccess ? (
+                    <div className="bg-green-50 text-green-700 p-4 rounded-2xl flex items-center justify-center gap-2 font-bold">
+                      <CheckCircle2 className="w-6 h-6" />
+                      {activeTab === 'deposit' ? 'Deposit' : 'Withdrawal'} Successful!
+                    </div>
+                  ) : (
+                    <button 
+                      onClick={handleAction}
+                      disabled={!amount || isProcessing}
+                      className="w-full py-4 bg-brand-amber text-white rounded-2xl font-bold shadow-lg shadow-brand-amber/20 hover:bg-brand-amber/90 transition-all disabled:opacity-50"
+                    >
+                      {isProcessing ? 'Processing...' : `Confirm ${activeTab}`}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <div className="glass-card p-8 bg-brand-amber text-white overflow-hidden relative">
         {/* Decorative pattern */}

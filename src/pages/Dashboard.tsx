@@ -9,7 +9,8 @@ import {
   ArrowDownRight,
   Clock,
   ChevronRight,
-  Rocket
+  Rocket,
+  CheckCircle2
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { 
@@ -58,11 +59,41 @@ const StatCard = ({ title, value, change, icon: Icon, trend }: any) => (
 );
 
 export const Dashboard: React.FC = () => {
-  const { balance, currency } = useDeriv();
+  const { balance, currency, loginId } = useDeriv();
   const navigate = useNavigate();
 
   return (
     <div className="space-y-8">
+      {!loginId && (
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="glass-card p-8 bg-gradient-to-br from-brand-amber to-brand-terracotta text-white flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl shadow-brand-amber/30"
+        >
+          <div className="space-y-4 text-center md:text-left">
+            <h2 className="text-4xl">Start Your Trading Journey</h2>
+            <p className="text-white/80 text-lg max-w-xl">Join thousands of African traders. Connect your Deriv account now to access live markets, local payments, and gamified rewards.</p>
+            <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+              <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full text-sm">
+                <CheckCircle2 className="w-4 h-4 text-white" /> Instant Deposits
+              </div>
+              <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full text-sm">
+                <CheckCircle2 className="w-4 h-4 text-white" /> 24/7 Support
+              </div>
+              <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full text-sm">
+                <CheckCircle2 className="w-4 h-4 text-white" /> Local Payments
+              </div>
+            </div>
+          </div>
+          <button 
+            onClick={() => navigate('/profile')}
+            className="px-10 py-5 bg-white text-brand-terracotta rounded-2xl font-bold text-xl shadow-xl hover:bg-gray-50 transition-all whitespace-nowrap"
+          >
+            Connect Account
+          </button>
+        </motion.div>
+      )}
+
       {/* Roadmap Teaser */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -92,11 +123,17 @@ export const Dashboard: React.FC = () => {
           <p className="text-gray-500 mt-2">Track your performance and latest market trends.</p>
         </div>
         <div className="flex gap-3">
-          <button className="px-6 py-3 bg-brand-amber text-white rounded-xl font-bold shadow-lg shadow-brand-amber/20 hover:bg-brand-amber/90 transition-all flex items-center gap-2">
+          <button 
+            onClick={() => navigate('/trade')}
+            className="px-6 py-3 bg-brand-amber text-white rounded-xl font-bold shadow-lg shadow-brand-amber/20 hover:bg-brand-amber/90 transition-all flex items-center gap-2"
+          >
             <TrendingUp className="w-5 h-5" />
             New Trade
           </button>
-          <button className="px-6 py-3 bg-white text-gray-700 border border-gray-200 rounded-xl font-bold hover:bg-gray-50 transition-all flex items-center gap-2">
+          <button 
+            onClick={() => navigate('/funds')}
+            className="px-6 py-3 bg-white text-gray-700 border border-gray-200 rounded-xl font-bold hover:bg-gray-50 transition-all flex items-center gap-2"
+          >
             <Wallet className="w-5 h-5" />
             Deposit
           </button>
