@@ -115,7 +115,7 @@ export const Markets: React.FC = () => {
           {filteredSymbols.slice(0, 100).map((symbol) => (
             <div 
               key={symbol.symbol}
-              onClick={() => navigate('/trade')}
+              onClick={() => navigate(`/trade/${symbol.symbol}`)}
               className="glass-card p-6 group cursor-pointer hover:border-brand-amber/50 transition-all"
             >
               <div className="flex items-center justify-between mb-4">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useDeriv } from '@/contexts/DerivContext';
 import { deriv } from '@/lib/deriv';
 import { 
@@ -8,7 +9,9 @@ import {
   Info,
   ChevronDown,
   Zap,
-  ShieldCheck
+  ShieldCheck,
+  BarChart2,
+  Activity
 } from 'lucide-react';
 import { 
   LineChart, 
@@ -21,10 +24,13 @@ import {
 } from 'recharts';
 import { cn, formatCurrency } from '@/lib/utils';
 import { motion } from 'motion/react';
+import { CandlestickChart } from '@/components/CandlestickChart';
 
 export const Trade: React.FC = () => {
   const { activeSymbols, balance, currency, loginId, isGuest, updateGuestBalance } = useDeriv();
-  const [selectedSymbol, setSelectedSymbol] = useState('R_100');
+  const { symbol: urlSymbol } = useParams();
+  const navigate = useNavigate();
+  const [selectedSymbol, setSelectedSymbol] = useState(urlSymbol || 'R_100');
   const [ticks, setTicks] = useState<any[]>([]);
   const [amount, setAmount] = useState(10);
   const [duration, setDuration] = useState(5);
@@ -32,6 +38,19 @@ export const Trade: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSMA, setShowSMA] = useState(true);
   const [showEMA, setShowEMA] = useState(false);
+  const [chartType, setChartType] = useState<'line' | 'candles'>('line');
+  const [candles, setCandles] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (urlSymbol && urlSymbol !== selectedSymbol) {
+      setSelectedSymbol(urlSymbol);
+    }
+  }, [urlSymbol]);
+
+  const handleSymbolChange = (symbol: string) => {
+    setSelectedSymbol(symbol);
+    navigate(`/trade/${symbol}`);
+  };
 
   const filteredSymbols = activeSymbols.filter(s => 
     s.display_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -40,29 +59,84 @@ export const Trade: React.FC = () => {
 
   useEffect(() => {
     if (!loginId) return;
-    // Subscribe to ticks for selected symbol
-    const unsubscribe = deriv.subscribe({ ticks: selectedSymbol }, (data) => {
-      setTicks(prev => {
-        const newTickValue = data.tick.quote;
-          const newTick = {
-            time: new Date(data.tick.epoch * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-            value: newTickValue,
-            // Simple Moving Average (SMA)
-            sma: prev.length >= 10 
-              ? (prev.slice(-9).reduce((acc, t) => acc + t.value, 0) + newTickValue) / 10 
-              : newTickValue,
-            // Exponential Moving Average (EMA)
-            ema: prev.length > 0
-              ? (newTickValue * (2 / (10 + 1))) + (prev[prev.length - 1].ema * (1 - (2 / (10 + 1))))
-              : newTickValue
-          };
-          const updated = [...prev, newTick].slice(-50);
-        return updated;
+    
+    if (chartType === 'line') {
+      // Subscribe to ticks for selected symbol
+      const unsubscribe = deriv.subscribe({ ticks: selectedSymbol }, (data) => {
+        setTicks(prev => {
+          const newTickValue = data.tick.quote;
+            const newTick = {
+              time: new Date(data.tick.epoch * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+              value: newTickValue,
+              // Simple Moving Average (SMA)
+              sma: prev.length >= 10 
+                ? (prev.slice(-9).reduce((acc, t) => acc + t.value, 0) + newTickValue) / 10 
+                : newTickValue,
+              // Exponential Moving Average (EMA)
+              ema: prev.length > 0
+                ? (newTickValue * (2 / (10 + 1))) + (prev[prev.length - 1].ema * (1 - (2 / (10 + 1))))
+                : newTickValue
+            };
+            const updated = [...prev, newTick].slice(-50);
+          return updated;
+        });
       });
-    });
+      return () => unsubscribe();
+    } else {
+      // Fetch history first
+      deriv.send({
+        ticks_history: selectedSymbol,
+        adjust_start_time: 1,
+        count: 100,
+        end: 'latest',
+        start: 1,
+        style: 'candles',
+        granularity: 60
+      }).then(response => {
+        if (response.candles) {
+          const formatted = response.candles.map((c: any) => ({
+            time: c.epoch,
+            open: c.open,
+            high: c.high,
+            low: c.low,
+            close: c.close
+          }));
+          setCandles(formatted);
+        }
+      });
 
-    return () => unsubscribe();
-  }, [selectedSymbol]);
+      // Subscribe to OHLC
+      const unsubscribe = deriv.subscribe({ 
+        ticks_history: selectedSymbol, 
+        style: 'candles', 
+        granularity: 60 
+      }, (data) => {
+        if (data.ohlc) {
+          setCandles(prev => {
+            const newCandle = {
+              time: data.ohlc.open_time,
+              open: parseFloat(data.ohlc.open),
+              high: parseFloat(data.ohlc.high),
+              low: parseFloat(data.ohlc.low),
+              close: parseFloat(data.ohlc.close)
+            };
+            
+            const lastCandle = prev[prev.length - 1];
+            let updated;
+            if (lastCandle && lastCandle.time === newCandle.time) {
+              // Update existing candle
+              updated = [...prev.slice(0, -1), newCandle];
+            } else {
+              // Add new candle
+              updated = [...prev, newCandle].slice(-100);
+            }
+            return updated.sort((a, b) => a.time - b.time);
+          });
+        }
+      });
+      return () => unsubscribe();
+    }
+  }, [selectedSymbol, chartType, loginId]);
 
   const handleTrade = async (type: 'CALL' | 'PUT') => {
     if (amount > balance) {
@@ -163,7 +237,7 @@ export const Trade: React.FC = () => {
               {filteredSymbols.slice(0, 20).map((symbol) => (
                 <button
                   key={symbol.symbol}
-                  onClick={() => setSelectedSymbol(symbol.symbol)}
+                  onClick={() => handleSymbolChange(symbol.symbol)}
                   className={cn(
                     "w-full flex items-center justify-between p-3 rounded-xl transition-all",
                     selectedSymbol === symbol.symbol ? "bg-brand-amber/10 text-brand-amber border border-brand-amber/20" : "hover:bg-gray-50 text-gray-600"
@@ -213,83 +287,111 @@ export const Trade: React.FC = () => {
               </div>
             </div>
             <div className="flex gap-2">
-              <button 
-                onClick={() => setShowSMA(!showSMA)}
-                className={cn(
-                  "px-3 py-1 text-[10px] font-bold rounded-lg border transition-all",
-                  showSMA ? "bg-brand-amber text-white border-brand-amber" : "bg-white text-gray-500 border-gray-200"
-                )}
-              >
-                SMA (10)
-              </button>
-              <button 
-                onClick={() => setShowEMA(!showEMA)}
-                className={cn(
-                  "px-3 py-1 text-[10px] font-bold rounded-lg border transition-all",
-                  showEMA ? "bg-brand-forest text-white border-brand-forest" : "bg-white text-gray-500 border-gray-200"
-                )}
-              >
-                EMA (10)
-              </button>
+              <div className="flex bg-gray-100 p-1 rounded-xl mr-2">
+                <button 
+                  onClick={() => setChartType('line')}
+                  className={cn(
+                    "p-1.5 rounded-lg transition-all",
+                    chartType === 'line' ? "bg-white text-brand-amber shadow-sm" : "text-gray-400 hover:text-gray-600"
+                  )}
+                >
+                  <Activity className="w-4 h-4" />
+                </button>
+                <button 
+                  onClick={() => setChartType('candles')}
+                  className={cn(
+                    "p-1.5 rounded-lg transition-all",
+                    chartType === 'candles' ? "bg-white text-brand-amber shadow-sm" : "text-gray-400 hover:text-gray-600"
+                  )}
+                >
+                  <BarChart2 className="w-4 h-4" />
+                </button>
+              </div>
+              {chartType === 'line' && (
+                <>
+                  <button 
+                    onClick={() => setShowSMA(!showSMA)}
+                    className={cn(
+                      "px-3 py-1 text-[10px] font-bold rounded-lg border transition-all",
+                      showSMA ? "bg-brand-amber text-white border-brand-amber" : "bg-white text-gray-500 border-gray-200"
+                    )}
+                  >
+                    SMA (10)
+                  </button>
+                  <button 
+                    onClick={() => setShowEMA(!showEMA)}
+                    className={cn(
+                      "px-3 py-1 text-[10px] font-bold rounded-lg border transition-all",
+                      showEMA ? "bg-brand-forest text-white border-brand-forest" : "bg-white text-gray-500 border-gray-200"
+                    )}
+                  >
+                    EMA (10)
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
           <div className="flex-1 w-full min-h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={ticks}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="time" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fontSize: 10, fill: '#9ca3af' }}
-                />
-                <YAxis 
-                  domain={['auto', 'auto']} 
-                  orientation="right"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 10, fill: '#9ca3af' }}
-                />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#fff', 
-                    borderRadius: '12px', 
-                    border: 'none', 
-                    boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' 
-                  }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke="#EF4444" 
-                  strokeWidth={2} 
-                  dot={false}
-                  animationDuration={300}
-                />
-                {showSMA && (
+            {chartType === 'line' ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={ticks}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                  <XAxis 
+                    dataKey="time" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fontSize: 10, fill: '#9ca3af' }}
+                  />
+                  <YAxis 
+                    domain={['auto', 'auto']} 
+                    orientation="right"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 10, fill: '#9ca3af' }}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#fff', 
+                      borderRadius: '12px', 
+                      border: 'none', 
+                      boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' 
+                    }}
+                  />
                   <Line 
                     type="monotone" 
-                    dataKey="sma" 
-                    stroke="#991B1B" 
-                    strokeWidth={1} 
-                    strokeDasharray="5 5"
+                    dataKey="value" 
+                    stroke="#EF4444" 
+                    strokeWidth={2} 
                     dot={false}
-                    animationDuration={0}
+                    animationDuration={300}
                   />
-                )}
-                {showEMA && (
-                  <Line 
-                    type="monotone" 
-                    dataKey="ema" 
-                    stroke="#1E1B4B" 
-                    strokeWidth={1} 
-                    dot={false}
-                    animationDuration={0}
-                  />
-                )}
-              </LineChart>
-            </ResponsiveContainer>
+                  {showSMA && (
+                    <Line 
+                      type="monotone" 
+                      dataKey="sma" 
+                      stroke="#991B1B" 
+                      strokeWidth={1} 
+                      strokeDasharray="5 5"
+                      dot={false}
+                      animationDuration={0}
+                    />
+                  )}
+                  {showEMA && (
+                    <Line 
+                      type="monotone" 
+                      dataKey="ema" 
+                      stroke="#1E1B4B" 
+                      strokeWidth={1} 
+                      dot={false}
+                      animationDuration={0}
+                    />
+                  )}
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <CandlestickChart data={candles} />
+            )}
           </div>
         </div>
       </div>

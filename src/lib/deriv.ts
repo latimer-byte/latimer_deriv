@@ -48,9 +48,11 @@ class DerivService {
         }
       }
 
-      // Handle subscription messages (ticks, etc.)
+      // Handle subscription messages (ticks, ohlc, etc.)
       if (response.msg_type === 'tick') {
         this.broadcast('tick', response);
+      } else if (response.msg_type === 'ohlc') {
+        this.broadcast('ohlc', response);
       }
     };
 
@@ -127,16 +129,23 @@ class DerivService {
 
     this.socket?.send(JSON.stringify(payload));
 
-    const tickHandler = (data: any) => {
+    const messageHandler = (data: any) => {
+      // For ticks
       if (data.tick?.symbol === request.ticks) {
+        onData(data);
+      }
+      // For OHLC
+      if (data.ohlc?.symbol === request.ticks_history) {
         onData(data);
       }
     };
 
-    this.on('tick', tickHandler);
+    this.on('tick', messageHandler);
+    this.on('ohlc', messageHandler);
 
     return () => {
-      this.off('tick', tickHandler);
+      this.off('tick', messageHandler);
+      this.off('ohlc', messageHandler);
       this.send({ forget: reqId });
     };
   }

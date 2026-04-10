@@ -22,6 +22,7 @@ export default function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="trade" element={<Trade />} />
+            <Route path="trade/:symbol" element={<Trade />} />
             <Route path="funds" element={<Funds />} />
             <Route path="history" element={<History />} />
             <Route path="markets" element={<Markets />} />
