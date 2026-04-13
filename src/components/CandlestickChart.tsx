@@ -33,27 +33,32 @@ export const CandlestickChart: React.FC<CandlestickChartProps> = ({
 
     const chart = createChart(chartContainerRef.current, {
       layout: {
-        background: { type: ColorType.Solid, color: backgroundColor },
-        textColor,
+        background: { type: ColorType.Solid, color: 'transparent' },
+        textColor: '#64748b',
+        fontFamily: 'JetBrains Mono, monospace',
       },
       width: chartContainerRef.current.clientWidth,
       height: 400,
       grid: {
-        vertLines: { color: '#f0f0f0' },
-        horzLines: { color: '#f0f0f0' },
+        vertLines: { color: '#1e293b' },
+        horzLines: { color: '#1e293b' },
       },
       timeScale: {
+        borderColor: '#1e293b',
         timeVisible: true,
         secondsVisible: false,
+      },
+      rightPriceScale: {
+        borderColor: '#1e293b',
       },
     }) as any;
 
     const candlestickSeries = chart.addCandlestickSeries({
       upColor: '#22c55e',
-      downColor: '#EF4444',
+      downColor: '#ef4444',
       borderVisible: false,
       wickUpColor: '#22c55e',
-      wickDownColor: '#EF4444',
+      wickDownColor: '#ef4444',
     });
 
     chartRef.current = chart;
@@ -73,5 +78,13 @@ export const CandlestickChart: React.FC<CandlestickChartProps> = ({
     }
   }, [data]);
 
-  return <div ref={chartContainerRef} className="w-full h-full" />;
+  return (
+    <div ref={chartContainerRef} className="w-full h-full min-h-[400px] relative overflow-hidden">
+      {data.length === 0 && (
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-950/20 backdrop-blur-sm z-10">
+          <div className="w-8 h-8 border-4 border-brand-amber border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
+    </div>
+  );
 };

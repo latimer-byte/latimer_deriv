@@ -49,47 +49,49 @@ export const Markets: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 space-y-4">
+      <div className="flex flex-col items-center justify-center py-20 space-y-4 aegis-grid min-h-screen">
         <div className="w-12 h-12 border-4 border-brand-amber border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-gray-500 font-medium">Loading markets...</p>
+        <p className="text-orange-100/40 font-bold uppercase tracking-widest text-xs">Scanning Neural Markets...</p>
       </div>
     );
   }
 
   if (error && activeSymbols.length === 0) {
     return (
-      <div className="text-center py-20 glass-card bg-red-50 border-red-100">
-        <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-        <h3 className="text-xl text-red-900 font-bold">Connection Error</h3>
-        <p className="text-red-600 mt-2">{error}</p>
+      <div className="text-center py-20 glass-card bg-brand-forest/40 border-brand-terracotta/20 aegis-grid min-h-screen">
+        <AlertCircle className="w-16 h-16 text-brand-terracotta mx-auto mb-4" />
+        <h3 className="text-xl text-white font-bold tracking-tight font-display">Neural Link Severed</h3>
+        <p className="text-orange-100/40 mt-2">{error}</p>
         <button 
           onClick={() => window.location.reload()}
-          className="mt-6 px-6 py-2 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-all"
+          className="mt-6 px-6 py-2 bg-brand-amber text-white rounded-xl font-bold hover:bg-brand-amber/90 transition-all shadow-lg shadow-brand-amber/20 neon-glow-red"
         >
-          Retry Connection
+          Re-initialize Link
         </button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-20 aegis-grid min-h-screen">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h2 className="text-4xl text-brand-terracotta">Explore Markets</h2>
-          <p className="text-gray-500 mt-2">Discover thousands of assets across global financial markets.</p>
+          <h2 className="text-4xl font-bold text-white tracking-tight font-display">Market Nodes</h2>
+          <p className="text-orange-100/40 mt-1 uppercase tracking-[0.2em] text-[10px] font-bold">Global Asset Neural Network</p>
         </div>
       </div>
 
       {/* Categories */}
-      <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0">
+      <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
         {categories.map((cat) => (
           <button
             key={cat.id}
             onClick={() => setActiveCategory(cat.id)}
             className={cn(
-              "flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all whitespace-nowrap",
-              activeCategory === cat.id ? "bg-brand-amber text-white shadow-lg shadow-brand-amber/20" : "bg-white text-gray-500 border border-gray-200 hover:bg-gray-50"
+              "flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all whitespace-nowrap border",
+              activeCategory === cat.id 
+                ? "bg-brand-amber text-white shadow-lg shadow-brand-amber/20 border-brand-amber neon-glow-red" 
+                : "bg-brand-forest/40 text-orange-100/40 border-orange-900/20 hover:bg-brand-forest hover:text-white"
             )}
           >
             <cat.icon className="w-5 h-5" />
@@ -101,13 +103,13 @@ export const Markets: React.FC = () => {
       {/* Search & Grid */}
       <div className="space-y-6">
         <div className="relative max-w-xl">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-100/20 w-5 h-5" />
           <input 
             type="text" 
-            placeholder="Search assets (e.g. BTC, Gold, Volatility)..." 
+            placeholder="Search asset nodes (e.g. BTC, Gold, Volatility)..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white border border-gray-200 rounded-2xl py-4 pl-12 pr-6 text-lg outline-none focus:ring-2 focus:ring-brand-amber/20 shadow-sm"
+            className="w-full bg-brand-forest/40 border border-orange-900/20 rounded-2xl py-4 pl-12 pr-6 text-lg outline-none focus:ring-2 focus:ring-brand-amber/20 shadow-sm text-white placeholder:text-orange-100/10"
           />
         </div>
 
@@ -116,39 +118,39 @@ export const Markets: React.FC = () => {
             <div 
               key={symbol.symbol}
               onClick={() => navigate(`/trade/${symbol.symbol}`)}
-              className="glass-card p-6 group cursor-pointer hover:border-brand-amber/50 transition-all"
+              className="glass-card p-6 group cursor-pointer hover:border-brand-amber/50 transition-all bg-brand-forest/40 border-orange-900/20"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-brand-earth flex items-center justify-center border border-gray-100 group-hover:bg-brand-amber/10 transition-all">
+                  <div className="w-10 h-10 rounded-xl bg-brand-earth flex items-center justify-center border border-orange-900/20 group-hover:bg-brand-amber/10 transition-all">
                     <TrendingUp className="text-brand-terracotta w-5 h-5 group-hover:text-brand-amber" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900">{symbol.display_name}</h4>
-                    <p className="text-[10px] text-gray-400 uppercase tracking-widest">{symbol.market_display_name}</p>
+                    <h4 className="font-bold text-white text-sm tracking-tight font-display">{symbol.display_name}</h4>
+                    <p className="text-[10px] text-orange-100/40 uppercase tracking-widest font-bold">{symbol.market_display_name}</p>
                   </div>
                 </div>
-                <button className="text-gray-300 hover:text-yellow-400 transition-all">
+                <button className="text-orange-100/10 hover:text-brand-amber transition-all">
                   <Star className="w-5 h-5" />
                 </button>
               </div>
               
               <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Spread</p>
-                  <p className="font-mono text-sm font-bold text-gray-900">0.00012</p>
+                  <p className="text-[10px] text-orange-100/40 mb-1 font-bold uppercase tracking-widest">Spread</p>
+                  <p className="font-mono text-sm font-bold text-white">0.00012</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-gray-500 mb-1">Leverage</p>
-                  <p className="font-bold text-gray-900">1:1000</p>
+                  <p className="text-[10px] text-orange-100/40 mb-1 font-bold uppercase tracking-widest">Leverage</p>
+                  <p className="font-bold text-white font-mono text-sm">1:1000</p>
                 </div>
               </div>
 
-              <div className="mt-6 pt-6 border-t border-gray-50 flex gap-2">
-                <button className="flex-1 py-2 bg-brand-amber/10 text-brand-amber rounded-lg text-xs font-bold hover:bg-brand-amber hover:text-white transition-all">
-                  Trade Now
+              <div className="mt-6 pt-6 border-t border-orange-900/20 flex gap-2">
+                <button className="flex-1 py-2 bg-brand-amber/10 text-brand-amber rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-brand-amber hover:text-white transition-all border border-brand-amber/20">
+                  Initialize Node
                 </button>
-                <button className="px-3 py-2 bg-gray-50 text-gray-400 rounded-lg hover:bg-gray-100 transition-all">
+                <button className="px-3 py-2 bg-brand-earth text-orange-100/40 rounded-lg hover:bg-brand-forest transition-all border border-orange-900/20">
                   <BarChart3 className="w-4 h-4" />
                 </button>
               </div>
@@ -157,15 +159,15 @@ export const Markets: React.FC = () => {
         </div>
         
         {filteredSymbols.length === 0 && (
-          <div className="text-center py-20 glass-card">
-            <Globe className="w-16 h-16 text-gray-200 mx-auto mb-4" />
-            <h3 className="text-xl text-gray-900">No markets found</h3>
-            <p className="text-gray-500">Try adjusting your search or category filters.</p>
+          <div className="text-center py-20 glass-card bg-brand-forest/40 border-orange-900/20">
+            <Globe className="w-16 h-16 text-orange-100/10 mx-auto mb-4" />
+            <h3 className="text-xl text-white font-bold tracking-tight font-display">No Market Nodes Found</h3>
+            <p className="text-orange-100/40 mt-1 uppercase tracking-widest text-[10px] font-bold">Adjust neural filters or search parameters</p>
             <button 
               onClick={() => window.location.reload()}
-              className="mt-6 px-6 py-2 bg-brand-amber text-white rounded-xl font-bold hover:bg-brand-amber/90 transition-all"
+              className="mt-6 px-6 py-2 bg-brand-amber text-white rounded-xl font-bold hover:bg-brand-amber/90 transition-all shadow-lg shadow-brand-amber/20 neon-glow-red"
             >
-              Refresh Markets
+              Refresh Matrix
             </button>
           </div>
         )}

@@ -1,53 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useDeriv } from '@/contexts/DerivContext';
-import { deriv } from '@/lib/deriv';
 import { 
   TrendingUp, 
   TrendingDown, 
   Search, 
-  Info,
-  ChevronDown,
-  Zap,
-  ShieldCheck,
+  Zap, 
+  Activity, 
   BarChart2,
-  Activity
+  Shield,
+  Sword,
+  Crosshair,
+  AlertCircle
 } from 'lucide-react';
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer 
-} from 'recharts';
+import { deriv } from '@/lib/deriv';
+import { useDeriv } from '@/contexts/DerivContext';
 import { cn, formatCurrency } from '@/lib/utils';
-import { motion } from 'motion/react';
 import { CandlestickChart } from '@/components/CandlestickChart';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { ShieldGauge } from '@/components/trading/ShieldGauge';
+import { TradePanel } from '@/components/trading/TradePanel';
 
 export const Trade: React.FC = () => {
-  const { activeSymbols, balance, currency, loginId, isGuest, updateGuestBalance } = useDeriv();
   const { symbol: urlSymbol } = useParams();
   const navigate = useNavigate();
+  const { activeSymbols, balance, currency, loginId, isGuest, updateGuestBalance } = useDeriv();
   const [selectedSymbol, setSelectedSymbol] = useState(urlSymbol || 'R_100');
   const [ticks, setTicks] = useState<any[]>([]);
-  const [amount, setAmount] = useState(10);
-  const [duration, setDuration] = useState(5);
+  const [candles, setCandles] = useState<any[]>([]);
+  const [chartType, setChartType] = useState<'line' | 'candles'>('line');
   const [isTrading, setIsTrading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showSMA, setShowSMA] = useState(true);
-  const [showEMA, setShowEMA] = useState(false);
-  const [chartType, setChartType] = useState<'line' | 'candles'>('line');
-  const [candles, setCandles] = useState<any[]>([]);
+  const [riskLevel, setRiskLevel] = useState(45);
 
   useEffect(() => {
     if (urlSymbol && urlSymbol !== selectedSymbol) {
+      setTicks([]);
+      setCandles([]);
       setSelectedSymbol(urlSymbol);
     }
   }, [urlSymbol]);
 
   const handleSymbolChange = (symbol: string) => {
+    setTicks([]);
+    setCandles([]);
     setSelectedSymbol(symbol);
     navigate(`/trade/${symbol}`);
   };
@@ -60,30 +55,26 @@ export const Trade: React.FC = () => {
   useEffect(() => {
     if (!loginId) return;
     
+    setTicks([]);
+    setCandles([]);
+    
     if (chartType === 'line') {
-      // Subscribe to ticks for selected symbol
       const unsubscribe = deriv.subscribe({ ticks: selectedSymbol }, (data) => {
-        setTicks(prev => {
-          const newTickValue = data.tick.quote;
+        if (data.tick) {
+          setTicks(prev => {
+            const newTickValue = data.tick.quote;
             const newTick = {
               time: new Date(data.tick.epoch * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
               value: newTickValue,
-              // Simple Moving Average (SMA)
-              sma: prev.length >= 10 
-                ? (prev.slice(-9).reduce((acc, t) => acc + t.value, 0) + newTickValue) / 10 
-                : newTickValue,
-              // Exponential Moving Average (EMA)
-              ema: prev.length > 0
-                ? (newTickValue * (2 / (10 + 1))) + (prev[prev.length - 1].ema * (1 - (2 / (10 + 1))))
-                : newTickValue
             };
-            const updated = [...prev, newTick].slice(-50);
-          return updated;
-        });
+            return [...prev, newTick].slice(-50);
+          });
+          // Randomly fluctuate risk level for gamification
+          setRiskLevel(prev => Math.max(10, Math.min(95, prev + (Math.random() * 4 - 2))));
+        }
       });
       return () => unsubscribe();
     } else {
-      // Fetch history first
       deriv.send({
         ticks_history: selectedSymbol,
         adjust_start_time: 1,
@@ -100,12 +91,11 @@ export const Trade: React.FC = () => {
             high: c.high,
             low: c.low,
             close: c.close
-          }));
+          })).sort((a: any, b: any) => a.time - b.time);
           setCandles(formatted);
         }
-      });
+      }).catch(err => console.error('Candle history error:', err));
 
-      // Subscribe to OHLC
       const unsubscribe = deriv.subscribe({ 
         ticks_history: selectedSymbol, 
         style: 'candles', 
@@ -124,10 +114,8 @@ export const Trade: React.FC = () => {
             const lastCandle = prev[prev.length - 1];
             let updated;
             if (lastCandle && lastCandle.time === newCandle.time) {
-              // Update existing candle
               updated = [...prev.slice(0, -1), newCandle];
             } else {
-              // Add new candle
               updated = [...prev, newCandle].slice(-100);
             }
             return updated.sort((a, b) => a.time - b.time);
@@ -138,57 +126,48 @@ export const Trade: React.FC = () => {
     }
   }, [selectedSymbol, chartType, loginId]);
 
-  const handleTrade = async (type: 'CALL' | 'PUT') => {
+  const handleAegisTrade = async (type: 'CALL' | 'PUT', amount: number, hedge: boolean) => {
     if (amount > balance) {
-      alert('Insufficient balance');
+      alert('Insufficient credits for this operation.');
       return;
     }
 
     setIsTrading(true);
     try {
+      // Simulate Aegis Execution
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const entryPrice = ticks[ticks.length - 1]?.value || 0;
+      const isWin = Math.random() > 0.45; // 55% win rate for demo
+      const payout = amount * 1.95;
+
       if (isGuest) {
-        // Deduct stake immediately
-        updateGuestBalance(-amount);
-        
-        const entryPrice = ticks[ticks.length - 1]?.value || 0;
-        
-        // Simulate trade duration (2 seconds for demo)
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        // Determine win/loss randomly for demo, or based on price if available
-        // For a better demo feel, let's use a 55% win rate
-        const isWin = Math.random() > 0.45;
-        const payout = amount * 1.95;
-        
         if (isWin) {
-          updateGuestBalance(payout, {
+          updateGuestBalance(payout - amount, {
             pair: selectedSymbol,
-            type: type === 'CALL' ? 'Buy' : 'Sell',
+            type: type === 'CALL' ? 'Sword' : 'Defend',
             amount: `+${formatCurrency(payout - amount, currency)}`,
-            status: 'Profit',
+            status: 'Win',
             price: entryPrice.toFixed(2),
             time: new Date().toISOString()
           });
-          alert(`Trade Won! ${type} on ${selectedSymbol}. Payout: ${formatCurrency(payout, currency)}`);
         } else {
-          updateGuestBalance(0, {
+          // If hedged, loss is only 50%
+          const actualLoss = hedge ? amount * 0.5 : amount;
+          updateGuestBalance(-actualLoss, {
             pair: selectedSymbol,
-            type: type === 'CALL' ? 'Buy' : 'Sell',
-            amount: `-${formatCurrency(amount, currency)}`,
-            status: 'Loss',
+            type: type === 'CALL' ? 'Sword' : 'Defend',
+            amount: `-${formatCurrency(actualLoss, currency)}`,
+            status: hedge ? 'Shielded' : 'Loss',
             price: entryPrice.toFixed(2),
             time: new Date().toISOString()
           });
-          alert(`Trade Lost. ${type} on ${selectedSymbol}. Loss: ${formatCurrency(amount, currency)}`);
         }
-      } else {
-        // In a real app, you'd call buy here
-        // const response = await deriv.send({ buy: '...', price: amount });
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        alert(`Trade placed: ${type} on ${selectedSymbol} for ${formatCurrency(amount, currency)}`);
       }
+      
+      alert(isWin ? 'Aegis Strike Successful!' : (hedge ? 'Shield Absorbed Damage!' : 'Shield Failed! Critical Hit.'));
     } catch (err: any) {
-      alert(err.message || 'Trade failed');
+      alert('Aegis Network Error: ' + err.message);
     } finally {
       setIsTrading(false);
     }
@@ -198,277 +177,182 @@ export const Trade: React.FC = () => {
   const priceChange = ticks.length > 1 ? currentPrice - ticks[ticks.length - 2].value : 0;
 
   return (
-    <div className="relative">
+    <div className="relative min-h-screen aegis-grid">
       {!loginId && (
-        <div className="absolute inset-0 z-40 flex items-center justify-center bg-brand-earth/60 backdrop-blur-md rounded-3xl border-2 border-dashed border-brand-amber/30">
-          <div className="text-center space-y-6 max-w-md p-8 glass-card">
-            <div className="w-20 h-20 rounded-3xl bg-brand-amber/10 flex items-center justify-center mx-auto">
-              <Zap className="text-brand-amber w-10 h-10" />
+        <div className="absolute inset-0 z-40 flex items-center justify-center bg-brand-earth/60 backdrop-blur-xl">
+          <div className="text-center space-y-6 max-w-md p-10 glass-card border-brand-amber/30 neon-glow-red">
+            <div className="w-24 h-24 rounded-full bg-brand-amber/10 flex items-center justify-center mx-auto border border-brand-amber/20">
+              <Shield className="text-brand-amber w-12 h-12 animate-pulse" />
             </div>
             <div>
-              <h3 className="text-2xl font-serif text-brand-terracotta">Connect to Trade</h3>
-              <p className="text-gray-500 mt-2">You need to connect your Deriv account to access live markets and place trades.</p>
+              <h3 className="text-3xl font-bold text-white font-display">Initialize Aegis</h3>
+              <p className="text-orange-100/40 mt-2">Authentication required to access the Aegis Shield Network.</p>
             </div>
             <button 
-              onClick={() => window.location.href = '/profile'}
-              className="w-full py-4 bg-brand-amber text-white rounded-2xl font-bold shadow-lg shadow-brand-amber/20 hover:bg-brand-amber/90 transition-all"
+              onClick={() => navigate('/profile')}
+              className="w-full py-4 bg-brand-amber text-white rounded-2xl font-bold shadow-2xl shadow-brand-amber/40 hover:scale-105 transition-all neon-glow-red"
             >
-              Go to Profile
+              Connect Identity
             </button>
           </div>
         </div>
       )}
 
       <div className={cn("grid grid-cols-1 lg:grid-cols-4 gap-8", !loginId && "opacity-20 pointer-events-none grayscale")}>
-        {/* Left Column: Market Selector & Info */}
+        {/* Left Column: Market Selector */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="glass-card p-4">
+          <div className="glass-card p-4 bg-brand-forest/40 border-orange-900/20">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-100/20 w-4 h-4" />
               <input 
                 type="text" 
-                placeholder="Search markets..." 
+                placeholder="Search Aegis Assets..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-brand-amber/20"
+                className="w-full bg-brand-earth border border-orange-900/20 rounded-xl py-2 pl-10 pr-4 text-sm text-white outline-none focus:ring-2 focus:ring-brand-amber/20 placeholder:text-orange-100/10"
               />
             </div>
-            <div className="mt-4 space-y-1 max-h-[400px] overflow-auto pr-2">
+            <div className="mt-4 space-y-1 max-h-[500px] overflow-auto pr-2 custom-scrollbar">
               {filteredSymbols.slice(0, 20).map((symbol) => (
                 <button
                   key={symbol.symbol}
                   onClick={() => handleSymbolChange(symbol.symbol)}
                   className={cn(
                     "w-full flex items-center justify-between p-3 rounded-xl transition-all",
-                    selectedSymbol === symbol.symbol ? "bg-brand-amber/10 text-brand-amber border border-brand-amber/20" : "hover:bg-gray-50 text-gray-600"
+                    selectedSymbol === symbol.symbol 
+                      ? "bg-brand-amber/10 text-brand-amber border border-brand-amber/30" 
+                      : "hover:bg-brand-forest text-orange-100/40"
                   )}
                 >
                   <div className="text-left">
-                    <p className="font-bold text-sm">{symbol.display_name}</p>
-                    <p className="text-[10px] uppercase tracking-wider opacity-60">{symbol.market_display_name}</p>
+                    <p className="font-bold text-sm tracking-tight">{symbol.display_name}</p>
+                    <p className="text-[10px] uppercase tracking-widest opacity-50 font-bold">{symbol.market_display_name}</p>
                   </div>
-                  {selectedSymbol === symbol.symbol && <Zap className="w-4 h-4 fill-current" />}
+                  {selectedSymbol === symbol.symbol && <Crosshair className="w-4 h-4 text-brand-amber" />}
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="glass-card p-6 bg-brand-forest text-white">
-          <div className="flex items-center gap-2 mb-4">
-            <ShieldCheck className="w-5 h-5 text-brand-amber" />
-            <h4 className="font-bold">Safe Trading</h4>
-          </div>
-          <p className="text-xs text-white/80 leading-relaxed">
-            AfriTrade uses Deriv's secure API. Your funds are protected and trades are executed instantly on the global market.
-          </p>
-        </div>
-      </div>
-
-      {/* Center Column: Chart */}
-      <div className="lg:col-span-2 space-y-6">
-        <div className="glass-card p-6 min-h-[500px] flex flex-col">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-2xl">{activeSymbols.find(s => s.symbol === selectedSymbol)?.display_name || selectedSymbol}</h3>
-                <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-bold rounded uppercase">Live</span>
+          <div className="glass-card p-6 border-brand-terracotta/30 bg-brand-forest/40">
+            <div className="flex items-center gap-2 mb-4">
+              <AlertCircle className="w-5 h-5 text-brand-terracotta" />
+              <h4 className="font-bold text-brand-terracotta font-display">Network Status</h4>
+            </div>
+            <div className="space-y-3">
+              <div className="flex justify-between text-xs">
+                <span className="text-orange-100/40">Latency</span>
+                <span className="text-brand-jungle font-mono font-bold">24ms</span>
               </div>
-              <div className="flex items-center gap-3 mt-1">
-                <span className="text-3xl font-mono font-bold tracking-tighter">
-                  {currentPrice.toFixed(2)}
-                </span>
-                <span className={cn(
-                  "flex items-center text-sm font-bold",
-                  priceChange >= 0 ? "text-green-500" : "text-red-500"
-                )}>
-                  {priceChange >= 0 ? '+' : ''}{priceChange.toFixed(4)}
-                  {priceChange >= 0 ? <TrendingUp className="w-4 h-4 ml-1" /> : <TrendingDown className="w-4 h-4 ml-1" />}
-                </span>
+              <div className="flex justify-between text-xs">
+                <span className="text-orange-100/40">Shield Status</span>
+                <span className="text-brand-terracotta font-bold">ACTIVE</span>
               </div>
             </div>
-            <div className="flex gap-2">
-              <div className="flex bg-gray-100 p-1 rounded-xl mr-2">
+          </div>
+        </div>
+
+        {/* Center Column: Chart & Gauge */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="glass-card p-6 flex flex-col min-h-[600px] bg-brand-forest/40 border-orange-900/20">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-6">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-2xl font-bold font-display">{activeSymbols.find(s => s.symbol === selectedSymbol)?.display_name || selectedSymbol}</h3>
+                    <div className="flex items-center gap-1 px-2 py-0.5 bg-brand-jungle/10 text-brand-jungle text-[10px] font-bold rounded uppercase border border-brand-jungle/20">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-jungle animate-pulse" />
+                      Live Feed
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 mt-1">
+                    <span className="text-4xl font-mono font-bold tracking-tighter text-white">
+                      {currentPrice.toFixed(2)}
+                    </span>
+                    <span className={cn(
+                      "flex items-center text-sm font-bold px-2 py-0.5 rounded-lg",
+                      priceChange >= 0 ? "bg-brand-jungle/10 text-brand-jungle" : "bg-brand-terracotta/10 text-brand-terracotta"
+                    )}>
+                      {priceChange >= 0 ? '+' : ''}{priceChange.toFixed(4)}
+                    </span>
+                  </div>
+                </div>
+                <div className="hidden xl:block h-12 w-px bg-orange-900/20" />
+                <div className="hidden xl:block">
+                  <ShieldGauge riskLevel={Math.round(riskLevel)} />
+                </div>
+              </div>
+
+              <div className="flex bg-brand-earth p-1 rounded-xl border border-orange-900/20">
                 <button 
                   onClick={() => setChartType('line')}
                   className={cn(
-                    "p-1.5 rounded-lg transition-all",
-                    chartType === 'line' ? "bg-white text-brand-amber shadow-sm" : "text-gray-400 hover:text-gray-600"
+                    "p-2 rounded-lg transition-all",
+                    chartType === 'line' ? "bg-brand-forest text-brand-amber shadow-inner" : "text-orange-100/40 hover:text-white"
                   )}
                 >
-                  <Activity className="w-4 h-4" />
+                  <Activity className="w-5 h-5" />
                 </button>
                 <button 
                   onClick={() => setChartType('candles')}
                   className={cn(
-                    "p-1.5 rounded-lg transition-all",
-                    chartType === 'candles' ? "bg-white text-brand-amber shadow-sm" : "text-gray-400 hover:text-gray-600"
+                    "p-2 rounded-lg transition-all",
+                    chartType === 'candles' ? "bg-brand-forest text-brand-amber shadow-inner" : "text-orange-100/40 hover:text-white"
                   )}
                 >
-                  <BarChart2 className="w-4 h-4" />
+                  <BarChart2 className="w-5 h-5" />
                 </button>
               </div>
-              {chartType === 'line' && (
-                <>
-                  <button 
-                    onClick={() => setShowSMA(!showSMA)}
-                    className={cn(
-                      "px-3 py-1 text-[10px] font-bold rounded-lg border transition-all",
-                      showSMA ? "bg-brand-amber text-white border-brand-amber" : "bg-white text-gray-500 border-gray-200"
-                    )}
-                  >
-                    SMA (10)
-                  </button>
-                  <button 
-                    onClick={() => setShowEMA(!showEMA)}
-                    className={cn(
-                      "px-3 py-1 text-[10px] font-bold rounded-lg border transition-all",
-                      showEMA ? "bg-brand-forest text-white border-brand-forest" : "bg-white text-gray-500 border-gray-200"
-                    )}
-                  >
-                    EMA (10)
-                  </button>
-                </>
+            </div>
+
+            <div className="flex-1 w-full min-h-[400px] relative">
+              {chartType === 'line' ? (
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={400}>
+                  <LineChart data={ticks}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#451a03" strokeOpacity={0.2} />
+                    <XAxis 
+                      dataKey="time" 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fontSize: 10, fill: '#fef3c7', fillOpacity: 0.4 }} 
+                    />
+                    <YAxis 
+                      domain={['auto', 'auto']} 
+                      orientation="right"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fontSize: 10, fill: '#fef3c7', fillOpacity: 0.4 }}
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #451a03', borderRadius: '12px' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="value" 
+                      stroke="#F27D26" 
+                      strokeWidth={3} 
+                      dot={false}
+                      animationDuration={300}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <CandlestickChart data={candles} colors={{ backgroundColor: 'transparent', textColor: '#fef3c7' }} />
               )}
             </div>
           </div>
-
-          <div className="flex-1 w-full min-h-[300px]">
-            {chartType === 'line' ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={ticks}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                  <XAxis 
-                    dataKey="time" 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tick={{ fontSize: 10, fill: '#9ca3af' }}
-                  />
-                  <YAxis 
-                    domain={['auto', 'auto']} 
-                    orientation="right"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 10, fill: '#9ca3af' }}
-                  />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#fff', 
-                      borderRadius: '12px', 
-                      border: 'none', 
-                      boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' 
-                    }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="value" 
-                    stroke="#EF4444" 
-                    strokeWidth={2} 
-                    dot={false}
-                    animationDuration={300}
-                  />
-                  {showSMA && (
-                    <Line 
-                      type="monotone" 
-                      dataKey="sma" 
-                      stroke="#991B1B" 
-                      strokeWidth={1} 
-                      strokeDasharray="5 5"
-                      dot={false}
-                      animationDuration={0}
-                    />
-                  )}
-                  {showEMA && (
-                    <Line 
-                      type="monotone" 
-                      dataKey="ema" 
-                      stroke="#1E1B4B" 
-                      strokeWidth={1} 
-                      dot={false}
-                      animationDuration={0}
-                    />
-                  )}
-                </LineChart>
-              </ResponsiveContainer>
-            ) : (
-              <CandlestickChart data={candles} />
-            )}
-          </div>
         </div>
-      </div>
 
-      {/* Right Column: Order Panel */}
-      <div className="lg:col-span-1 space-y-6">
-        <div className="glass-card p-6 space-y-6">
-          <h3 className="text-xl">Place Order</h3>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Stake Amount ({currency})</label>
-              <div className="relative">
-                <input 
-                  type="number" 
-                  value={amount}
-                  onChange={(e) => setAmount(Number(e.target.value))}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 font-bold text-lg outline-none focus:ring-2 focus:ring-brand-amber/20"
-                />
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
-                  <button onClick={() => setAmount(prev => Math.max(1, prev - 5))} className="p-1 hover:bg-gray-200 rounded">-</button>
-                  <button onClick={() => setAmount(prev => prev + 5)} className="p-1 hover:bg-gray-200 rounded">+</button>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Duration (Ticks)</label>
-              <div className="grid grid-cols-4 gap-2">
-                {[1, 5, 10, 20].map(d => (
-                  <button 
-                    key={d}
-                    onClick={() => setDuration(d)}
-                    className={cn(
-                      "py-2 rounded-lg text-sm font-bold border transition-all",
-                      duration === d ? "bg-brand-amber text-white border-brand-amber" : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
-                    )}
-                  >
-                    {d}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-4 space-y-3">
-            <button 
-              disabled={isTrading}
-              onClick={() => handleTrade('CALL')}
-              className="w-full py-4 bg-green-600 text-white rounded-2xl font-bold shadow-lg shadow-green-600/20 hover:bg-green-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              <TrendingUp className="w-5 h-5" />
-              Buy / Rise
-            </button>
-            <button 
-              disabled={isTrading}
-              onClick={() => handleTrade('PUT')}
-              className="w-full py-4 bg-red-600 text-white rounded-2xl font-bold shadow-lg shadow-red-600/20 hover:bg-red-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              <TrendingDown className="w-5 h-5" />
-              Sell / Fall
-            </button>
-          </div>
-
-          <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
-            <div className="flex justify-between text-xs mb-2">
-              <span className="text-gray-500">Payout</span>
-              <span className="font-bold text-gray-900">{formatCurrency(amount * 1.95, currency)}</span>
-            </div>
-            <div className="flex justify-between text-xs">
-              <span className="text-gray-500">Potential Profit</span>
-              <span className="font-bold text-green-600">+{formatCurrency(amount * 0.95, currency)}</span>
-            </div>
-          </div>
+        {/* Right Column: Trade Panel */}
+        <div className="lg:col-span-1">
+          <TradePanel 
+            symbol={selectedSymbol} 
+            onTrade={handleAegisTrade}
+            isTrading={isTrading}
+          />
         </div>
       </div>
     </div>
-  </div>
-);
+  );
 };

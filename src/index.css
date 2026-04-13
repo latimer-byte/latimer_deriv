@@ -1,34 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Playfair Display", serif;
+  --font-display: "Outfit", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-  --color-brand-amber: #EF4444;
-  --color-brand-terracotta: #991B1B;
-  --color-brand-forest: #1E1B4B;
-  --color-brand-earth: #FDF2F2;
+  --color-brand-amber: #F27D26; /* Sunset Orange - Sword */
+  --color-brand-terracotta: #B84B26; /* Rich Earth - Shield */
+  --color-brand-gold: #FFB800; /* Savanna Gold */
+  --color-brand-forest: #2D1F1A; /* Warm Bark */
+  --color-brand-earth: #1A1310; /* Deep African Soil */
+  --color-brand-jungle: #2D5A27; /* Deep Jungle */
 }
 
 @layer base {
   body {
-    @apply bg-brand-earth text-gray-900 font-sans;
+    @apply bg-brand-earth text-orange-50/80 font-sans antialiased;
+    background-image: radial-gradient(circle at 50% 0%, #2D1F1A 0%, #1A1310 100%);
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif font-bold;
+    @apply font-display font-bold text-orange-50 tracking-tight;
   }
 }
 
+.aegis-grid {
+  background-image: 
+    linear-gradient(to right, rgba(184, 75, 38, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(184, 75, 38, 0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
 .african-pattern {
-  background-image: radial-gradient(#EF4444 0.5px, transparent 0.5px), radial-gradient(#EF4444 0.5px, #FDF2F2 0.5px);
-  background-size: 20px 20px;
-  background-position: 0 0, 10px 10px;
-  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30 30 0zm0 10L10 30l20 20 20-20-20-20z' fill='%23B84B26' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+  opacity: 0.4;
 }
 
 .glass-card {
-  @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-xl rounded-2xl;
+  @apply bg-brand-forest/40 backdrop-blur-xl border border-orange-900/20 shadow-2xl rounded-2xl transition-all duration-300;
+}
+
+.neon-glow-red {
+  box-shadow: 0 0 20px rgba(242, 125, 38, 0.3);
+}
+
+.neon-glow-blue {
+  box-shadow: 0 0 20px rgba(184, 75, 38, 0.3);
 }

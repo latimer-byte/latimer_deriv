@@ -10,7 +10,9 @@ import {
   Clock,
   ChevronRight,
   Rocket,
-  CheckCircle2
+  CheckCircle2,
+  Activity,
+  Shield
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { 
@@ -25,35 +27,35 @@ import {
 import { cn, formatCurrency } from '@/lib/utils';
 
 const mockChartData = [
-  { time: '09:00', value: 10200 },
-  { time: '10:00', value: 10150 },
-  { time: '11:00', value: 10300 },
-  { time: '12:00', value: 10250 },
-  { time: '13:00', value: 10400 },
-  { time: '14:00', value: 10350 },
-  { time: '15:00', value: 10500 },
+  { time: 'Mon', value: 10000, profit: 0 },
+  { time: 'Tue', value: 10150, profit: 150 },
+  { time: 'Wed', value: 10080, profit: -70 },
+  { time: 'Thu', value: 10300, profit: 220 },
+  { time: 'Fri', value: 10250, profit: -50 },
+  { time: 'Sat', value: 10450, profit: 200 },
+  { time: 'Sun', value: 10600, profit: 150 },
 ];
 
 const StatCard = ({ title, value, change, icon: Icon, trend }: any) => (
   <motion.div 
-    whileHover={{ y: -4 }}
-    className="glass-card p-6 flex flex-col gap-4"
+    whileHover={{ y: -4, scale: 1.02 }}
+    className="glass-card p-6 flex flex-col gap-4 border-l-4 border-l-brand-amber bg-brand-forest/40"
   >
     <div className="flex items-center justify-between">
-      <div className="w-12 h-12 rounded-2xl bg-brand-earth flex items-center justify-center border border-gray-100">
-        <Icon className="w-6 h-6 text-brand-terracotta" />
+      <div className="w-12 h-12 rounded-2xl bg-brand-earth flex items-center justify-center border border-orange-900/20">
+        <Icon className="w-6 h-6 text-brand-amber" />
       </div>
       <div className={cn(
-        "flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold",
-        trend === 'up' ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+        "flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold",
+        trend === 'up' ? "bg-brand-jungle/10 text-brand-jungle" : "bg-brand-terracotta/10 text-brand-terracotta"
       )}>
         {trend === 'up' ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
         {change}%
       </div>
     </div>
     <div>
-      <p className="text-sm text-gray-500 font-medium uppercase tracking-wider">{title}</p>
-      <h3 className="text-2xl font-bold text-gray-900 mt-1">{value}</h3>
+      <p className="text-[10px] text-orange-100/40 font-bold uppercase tracking-widest">{title}</p>
+      <h3 className="text-2xl font-bold text-white mt-1 font-mono">{value}</h3>
     </div>
   </motion.div>
 );
@@ -70,41 +72,41 @@ export const Dashboard: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-20 aegis-grid min-h-screen">
       {!loginId && (
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="glass-card p-8 bg-gradient-to-br from-brand-amber to-brand-terracotta text-white flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl shadow-brand-amber/30"
+          className="glass-card p-8 bg-gradient-to-br from-brand-amber/20 to-brand-terracotta/20 text-white flex flex-col md:flex-row items-center justify-between gap-8 border-brand-amber/30 neon-glow-red"
         >
           <div className="space-y-4 text-center md:text-left">
-            <h2 className="text-4xl">Start Your Trading Journey</h2>
-            <p className="text-white/80 text-lg max-w-xl">Join thousands of African traders. Try our $10,000 Demo account or connect your Deriv account for real trading.</p>
+            <h2 className="text-4xl font-bold tracking-tight font-display">Initialize Aegis Protocols</h2>
+            <p className="text-orange-100/60 text-lg max-w-xl">The Shield Network is offline. Connect your identity node to begin capital protection and market execution.</p>
             <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-              <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full text-sm">
-                <CheckCircle2 className="w-4 h-4 text-white" /> Instant Deposits
+              <div className="flex items-center gap-2 bg-brand-earth/50 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-orange-900/20">
+                <CheckCircle2 className="w-4 h-4 text-brand-amber" /> Neural Execution
               </div>
-              <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full text-sm">
-                <CheckCircle2 className="w-4 h-4 text-white" /> 24/7 Support
+              <div className="flex items-center gap-2 bg-brand-earth/50 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-orange-900/20">
+                <CheckCircle2 className="w-4 h-4 text-brand-amber" /> Shield Protection
               </div>
-              <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full text-sm">
-                <CheckCircle2 className="w-4 h-4 text-white" /> Local Payments
+              <div className="flex items-center gap-2 bg-brand-earth/50 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-orange-900/20">
+                <CheckCircle2 className="w-4 h-4 text-brand-amber" /> Global Node Access
               </div>
             </div>
           </div>
           <div className="flex flex-col gap-3 w-full md:w-auto">
             <button 
               onClick={() => navigate('/profile')}
-              className="px-10 py-5 bg-white text-brand-terracotta rounded-2xl font-bold text-xl shadow-xl hover:bg-gray-50 transition-all whitespace-nowrap"
+              className="px-10 py-5 bg-brand-amber text-white rounded-2xl font-bold text-xl shadow-xl shadow-brand-amber/20 hover:scale-105 transition-all whitespace-nowrap neon-glow-red"
             >
-              Login / Connect
+              Connect Identity
             </button>
             <a 
               href="https://deriv.com/signup/" 
               target="_blank"
-              className="px-10 py-3 bg-white/10 text-white border border-white/20 rounded-xl font-bold text-center hover:bg-white/20 transition-all"
+              className="px-10 py-3 bg-brand-earth/50 text-orange-100/40 border border-orange-900/20 rounded-xl font-bold text-center hover:bg-brand-forest transition-all text-sm"
             >
-              Sign Up
+              Register Node
             </a>
           </div>
         </motion.div>
@@ -115,28 +117,28 @@ export const Dashboard: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         onClick={() => navigate('/roadmap')}
-        className="glass-card p-6 bg-brand-terracotta text-white flex flex-col md:flex-row items-center justify-between gap-6 cursor-pointer hover:shadow-2xl transition-all overflow-hidden relative group"
+        className="glass-card p-6 bg-brand-forest/40 text-white flex flex-col md:flex-row items-center justify-between gap-6 cursor-pointer hover:shadow-2xl transition-all overflow-hidden relative group border-brand-terracotta/20"
       >
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl group-hover:scale-110 transition-transform" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-terracotta/5 rounded-full -mr-32 -mt-32 blur-3xl group-hover:scale-110 transition-transform" />
         <div className="flex items-center gap-6 relative z-10">
-          <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-2xl bg-brand-terracotta flex items-center justify-center shadow-lg shadow-brand-terracotta/20">
             <Rocket className="w-8 h-8 text-white" />
           </div>
           <div>
-            <h3 className="text-2xl font-serif">The Road to Unicorn</h3>
-            <p className="text-white/80">Explore our 3-year product vision and global expansion strategy.</p>
+            <h3 className="text-2xl font-bold tracking-tight font-display">The Aegis Roadmap</h3>
+            <p className="text-orange-100/40">Neural network expansion and multi-chain shield integration protocols.</p>
           </div>
         </div>
-        <button className="px-8 py-3 bg-white text-brand-terracotta rounded-xl font-bold shadow-xl relative z-10 whitespace-nowrap">
-          View Roadmap
+        <button className="px-8 py-3 bg-brand-terracotta text-white rounded-xl font-bold shadow-xl relative z-10 whitespace-nowrap hover:scale-105 transition-all">
+          View Protocols
         </button>
       </motion.div>
 
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h2 className="text-4xl text-brand-terracotta">Market Overview</h2>
-          <p className="text-gray-500 mt-2">Track your performance and latest market trends.</p>
+          <h2 className="text-4xl font-bold text-white tracking-tight font-display">Command Center</h2>
+          <p className="text-orange-100/40 mt-1 uppercase tracking-[0.2em] text-[10px] font-bold">Real-time Node Diagnostics</p>
         </div>
         <div className="flex gap-3">
           <button 
@@ -144,14 +146,14 @@ export const Dashboard: React.FC = () => {
             className="px-6 py-3 bg-brand-amber text-white rounded-xl font-bold shadow-lg shadow-brand-amber/20 hover:bg-brand-amber/90 transition-all flex items-center gap-2"
           >
             <TrendingUp className="w-5 h-5" />
-            New Trade
+            Initialize Trade
           </button>
           <button 
             onClick={() => navigate('/funds')}
-            className="px-6 py-3 bg-white text-gray-700 border border-gray-200 rounded-xl font-bold hover:bg-gray-50 transition-all flex items-center gap-2"
+            className="px-6 py-3 bg-brand-forest/40 text-orange-100/60 border border-orange-900/20 rounded-xl font-bold hover:bg-brand-forest transition-all flex items-center gap-2"
           >
             <Wallet className="w-5 h-5" />
-            Deposit
+            Inject Capital
           </button>
         </div>
       </div>
@@ -159,125 +161,185 @@ export const Dashboard: React.FC = () => {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard 
-          title="Total Balance" 
+          title="Total Liquidity" 
           value={formatCurrency(balance, currency)} 
           change="2.4" 
           icon={Wallet} 
           trend="up" 
         />
         <StatCard 
-          title="Active Trades" 
+          title="Active Operations" 
           value="12" 
           change="1.2" 
           icon={TrendingUp} 
           trend="up" 
         />
         <StatCard 
-          title="Profit/Loss" 
+          title="Net Yield" 
           value={formatCurrency(450.25, currency)} 
           change="0.5" 
           icon={TrendingUp} 
           trend="up" 
         />
         <StatCard 
-          title="Win Rate" 
+          title="Shield Efficiency" 
           value="68%" 
           change="4.2" 
-          icon={TrendingUp} 
+          icon={Shield} 
           trend="down" 
         />
+        <motion.div 
+          whileHover={{ y: -4, scale: 1.02 }}
+          className="glass-card p-6 flex flex-col gap-4 border-l-4 border-l-brand-amber bg-brand-forest/40"
+        >
+          <div className="flex items-center justify-between">
+            <div className="w-12 h-12 rounded-2xl bg-brand-earth flex items-center justify-center border border-orange-900/20">
+              <Activity className="w-6 h-6 text-brand-amber" />
+            </div>
+            <span className="text-[10px] font-bold text-brand-jungle uppercase tracking-widest">Bullish</span>
+          </div>
+          <div>
+            <p className="text-[10px] text-orange-100/40 font-bold uppercase tracking-widest">Market Sentiment</p>
+            <div className="mt-2 h-2 w-full bg-brand-earth rounded-full overflow-hidden flex border border-orange-900/20">
+              <div className="h-full bg-brand-jungle shadow-[0_0_10px_rgba(45,90,39,0.5)]" style={{ width: '72%' }} />
+              <div className="h-full bg-brand-terracotta shadow-[0_0_10px_rgba(184,75,38,0.5)]" style={{ width: '28%' }} />
+            </div>
+            <div className="flex justify-between mt-1 text-[10px] font-bold font-mono">
+              <span className="text-brand-jungle">72% ATTACK</span>
+              <span className="text-brand-terracotta">28% DEFEND</span>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Chart */}
-        <div className="lg:col-span-2 glass-card p-6">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-xl">Portfolio Performance</h3>
-            <select className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-sm font-medium outline-none focus:ring-2 focus:ring-brand-amber/20">
-              <option>Last 7 Days</option>
-              <option>Last 30 Days</option>
-              <option>Last Year</option>
-            </select>
+        <div className="lg:col-span-2 glass-card p-6 relative overflow-hidden bg-brand-forest/40">
+          <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+            <TrendingUp className="w-32 h-32 text-brand-terracotta" />
           </div>
-          <div className="h-[300px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 relative z-10">
+            <div>
+              <h3 className="text-xl font-bold text-white tracking-tight font-display">Neural Growth Matrix</h3>
+              <p className="text-[10px] text-orange-100/40 uppercase tracking-widest font-bold">Historical Performance Node</p>
+            </div>
+            <div className="flex bg-brand-earth p-1 rounded-xl border border-orange-900/20">
+              {['1D', '1W', '1M', '1Y', 'ALL'].map(t => (
+                <button key={t} className={cn(
+                  "px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all",
+                  t === '1W' ? "bg-brand-forest text-brand-amber shadow-inner" : "text-orange-100/40 hover:text-slate-300"
+                )}>
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="h-[350px] w-full relative">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={350}>
               <AreaChart data={mockChartData}>
                 <defs>
                   <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#EF4444" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#EF4444" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#F27D26" stopOpacity={0.4}/>
+                    <stop offset="50%" stopColor="#F27D26" stopOpacity={0.1}/>
+                    <stop offset="95%" stopColor="#F27D26" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(184, 75, 38, 0.1)" />
                 <XAxis 
                   dataKey="time" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fontSize: 12, fill: '#9ca3af' }} 
+                  tick={{ fontSize: 10, fill: 'rgba(255, 255, 255, 0.4)', fontWeight: 500 }} 
                   dy={10}
                 />
                 <YAxis 
                   hide 
-                  domain={['dataMin - 100', 'dataMax + 100']} 
+                  domain={['dataMin - 500', 'dataMax + 500']} 
                 />
                 <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#fff', 
-                    borderRadius: '12px', 
-                    border: 'none', 
-                    boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' 
-                  }} 
+                  cursor={{ stroke: '#F27D26', strokeWidth: 1, strokeDasharray: '5 5' }}
+                  content={({ active, payload }: any) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="bg-brand-earth p-4 rounded-2xl shadow-2xl border border-orange-900/20">
+                          <p className="text-[10px] font-bold text-orange-100/40 uppercase mb-1 tracking-widest">{payload[0].payload.time}</p>
+                          <p className="text-xl font-bold text-white font-mono">{formatCurrency(payload[0].value, currency)}</p>
+                          <p className={cn(
+                            "text-[10px] font-bold mt-1 uppercase tracking-widest",
+                            payload[0].payload.profit >= 0 ? "text-brand-jungle" : "text-brand-terracotta"
+                          )}>
+                            {payload[0].payload.profit >= 0 ? 'Yield: +' : 'Yield: '}{formatCurrency(payload[0].payload.profit, currency)}
+                          </p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
                 />
                 <Area 
                   type="monotone" 
                   dataKey="value" 
-                  stroke="#EF4444" 
-                  strokeWidth={3}
+                  stroke="#F27D26" 
+                  strokeWidth={4}
                   fillOpacity={1} 
                   fill="url(#colorValue)" 
+                  animationDuration={1500}
                 />
               </AreaChart>
             </ResponsiveContainer>
           </div>
+          <div className="mt-4 pt-4 border-t border-orange-900/20 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-brand-terracotta" />
+                <span className="text-[10px] font-bold text-orange-100/40 uppercase tracking-widest">Equity Node</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-brand-jungle" />
+                <span className="text-[10px] font-bold text-orange-100/40 uppercase tracking-widest">Profit Matrix</span>
+              </div>
+            </div>
+            <p className="text-[10px] font-bold text-orange-100/20 italic uppercase tracking-widest">Neural Sync Active</p>
+          </div>
         </div>
 
         {/* Recent Activity */}
-        <div className="glass-card p-6">
+        <div className="glass-card p-6 bg-brand-forest/40">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl">Recent Trades</h3>
-            <button className="text-brand-amber text-sm font-bold hover:underline">View All</button>
+            <h3 className="text-xl font-bold text-white tracking-tight font-display">Recent Operations</h3>
+            <button className="text-brand-amber text-[10px] font-bold hover:underline uppercase tracking-widest">Log History</button>
           </div>
           <div className="space-y-4">
             {displayTrades.slice(0, 4).map((trade, i) => (
-              <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-all group cursor-pointer">
+              <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-brand-forest transition-all group cursor-pointer border border-transparent hover:border-orange-900/20">
                 <div className="flex items-center gap-3">
                   <div className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center",
-                    trade.type === 'Buy' ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
+                    "w-10 h-10 rounded-xl flex items-center justify-center border",
+                    trade.type === 'Buy' || trade.type === 'Sword' ? "bg-brand-jungle/10 text-brand-jungle border-brand-jungle/20" : "bg-brand-terracotta/10 text-brand-terracotta border-brand-terracotta/20"
                   )}>
-                    {trade.type === 'Buy' ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
+                    {trade.type === 'Buy' || trade.type === 'Sword' ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
                   </div>
                   <div>
-                    <p className="font-bold text-gray-900">{trade.pair}</p>
-                    <p className="text-xs text-gray-500 flex items-center gap-1">
+                    <p className="font-bold text-white text-sm">{trade.pair}</p>
+                    <p className="text-[10px] text-orange-100/40 flex items-center gap-1 font-bold uppercase tracking-widest">
                       <Clock className="w-3 h-3" /> {trade.time.includes('ago') ? trade.time : new Date(trade.time).toLocaleTimeString()}
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className={cn(
-                    "font-bold",
-                    trade.status === 'Profit' ? "text-green-600" : "text-red-600"
+                    "font-bold font-mono text-sm",
+                    trade.status === 'Profit' || trade.status === 'Win' ? "text-brand-jungle" : "text-brand-terracotta"
                   )}>
                     {trade.amount}
                   </p>
-                  <p className="text-xs text-gray-500">{trade.price}</p>
+                  <p className="text-[10px] text-orange-100/40 font-mono">{trade.price}</p>
                 </div>
               </div>
             ))}
           </div>
-          <button className="w-full mt-6 py-3 border border-dashed border-gray-300 rounded-xl text-gray-500 text-sm font-medium hover:border-brand-amber hover:text-brand-amber transition-all flex items-center justify-center gap-2">
-            Explore Markets <ChevronRight className="w-4 h-4" />
+          <button className="w-full mt-6 py-3 border border-dashed border-orange-900/20 rounded-xl text-orange-100/40 text-[10px] font-bold uppercase tracking-widest hover:border-brand-amber hover:text-brand-amber transition-all flex items-center justify-center gap-2">
+            Scan Markets <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       </div>

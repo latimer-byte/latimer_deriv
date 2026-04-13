@@ -1,5 +1,5 @@
 {
-  "name": "AfriTrade",
-  "description": "A game-themed online trading platform powered by the Deriv API, featuring African-inspired design and local payment integrations.",
+  "name": "Aegis Trader",
+  "description": "A gamified risk-neutral trading platform featuring automated hedging (Sword & Shield) and real-time risk visualization.",
   "requestFramePermissions": []
 }

@@ -63,6 +63,8 @@ class DerivService {
   }
 
   private listeners: Map<string, Set<(data: any) => void>> = new Map();
+  private activeSubscriptions: Map<string, string> = new Map(); // symbol -> subscription_id
+  private pendingSubscriptions: Map<string, Promise<string>> = new Map(); // symbol -> promise of subscription_id
 
   on(event: string, callback: (data: any) => void) {
     if (!this.listeners.has(event)) {
@@ -118,35 +120,64 @@ class DerivService {
 
   // Helper for subscriptions
   subscribe(request: DerivRequest, onData: (data: any) => void) {
-    const reqId = (++this.messageId).toString();
-    const payload = { ...request, subscribe: 1, req_id: reqId };
-
-    this.callbacks.set(reqId, (response) => {
-      if (response.error) {
-        console.error('Subscription error:', response.error);
-      }
-    });
-
-    this.socket?.send(JSON.stringify(payload));
+    const symbol = request.ticks || request.ticks_history;
+    const subType = request.ticks ? 'tick' : 'ohlc';
+    const subKey = `${subType}:${symbol}`;
 
     const messageHandler = (data: any) => {
-      // For ticks
-      if (data.tick?.symbol === request.ticks) {
+      if (subType === 'tick' && data.tick?.symbol === symbol) {
         onData(data);
       }
-      // For OHLC
-      if (data.ohlc?.symbol === request.ticks_history) {
+      if (subType === 'ohlc' && data.ohlc?.symbol === symbol) {
         onData(data);
       }
     };
 
-    this.on('tick', messageHandler);
-    this.on('ohlc', messageHandler);
+    this.on(subType, messageHandler);
+
+    const startSubscription = async () => {
+      if (this.activeSubscriptions.has(subKey)) {
+        return this.activeSubscriptions.get(subKey)!;
+      }
+
+      if (this.pendingSubscriptions.has(subKey)) {
+        return this.pendingSubscriptions.get(subKey)!;
+      }
+
+      const promise = (async () => {
+        try {
+          const response = await this.send({ ...request, subscribe: 1 });
+          const subId = response.subscription?.id;
+          if (subId) {
+            this.activeSubscriptions.set(subKey, subId);
+            return subId;
+          }
+          throw new Error('No subscription ID returned');
+        } catch (err: any) {
+          if (err.code === 'AlreadySubscribed') {
+            // If already subscribed, we might not have the ID, but we can ignore the error
+            return 'already_subscribed';
+          }
+          throw err;
+        } finally {
+          this.pendingSubscriptions.delete(subKey);
+        }
+      })();
+
+      this.pendingSubscriptions.set(subKey, promise);
+      return promise;
+    };
+
+    const subPromise = startSubscription();
 
     return () => {
-      this.off('tick', messageHandler);
-      this.off('ohlc', messageHandler);
-      this.send({ forget: reqId });
+      this.off(subType, messageHandler);
+      subPromise.then(subId => {
+        if (subId && subId !== 'already_subscribed') {
+          this.send({ forget: subId }).catch(() => {});
+          this.activeSubscriptions.delete(subKey);
+        }
+      });
     };
   }
 }
