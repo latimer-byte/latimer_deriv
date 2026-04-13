@@ -73,10 +73,14 @@ export const DerivProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const updateGuestBalance = (amount: number, trade?: any) => {
-    if (!isGuest) return;
+    // Allow balance updates in guest mode or demo mode for simulation
+    if (!isGuest && !isDemo) return;
+    
     setBalance(prev => {
       const newBalance = prev + amount;
-      localStorage.setItem('deriv_guest_balance', newBalance.toString());
+      if (isGuest) {
+        localStorage.setItem('deriv_guest_balance', newBalance.toString());
+      }
       return newBalance;
     });
 

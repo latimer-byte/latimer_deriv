@@ -39,6 +39,8 @@ export const Markets: React.FC = () => {
         matchesCategory = s.market === 'synthetic_index' || s.market === 'indices';
       } else if (activeCategory === 'cryptocurrency') {
         matchesCategory = s.market === 'cryptocurrency' || s.market === 'crypto';
+      } else if (activeCategory === 'commodities') {
+        matchesCategory = s.market === 'commodities' || s.market === 'commodity';
       } else {
         matchesCategory = s.market === activeCategory;
       }
@@ -117,8 +119,10 @@ export const Markets: React.FC = () => {
           {filteredSymbols.slice(0, 100).map((symbol) => (
             <div 
               key={symbol.symbol}
-              onClick={() => navigate(`/trade/${symbol.symbol}`)}
-              className="glass-card p-6 group cursor-pointer hover:border-brand-amber/50 transition-all bg-brand-forest/40 border-orange-900/20"
+              onClick={() => {
+                navigate(`/trade/${symbol.symbol}`);
+              }}
+              className="glass-card p-6 group cursor-pointer hover:border-brand-amber/50 active:scale-[0.98] transition-all bg-brand-forest/40 border-orange-900/20"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -147,10 +151,22 @@ export const Markets: React.FC = () => {
               </div>
 
               <div className="mt-6 pt-6 border-t border-orange-900/20 flex gap-2">
-                <button className="flex-1 py-2 bg-brand-amber/10 text-brand-amber rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-brand-amber hover:text-white transition-all border border-brand-amber/20">
-                  Initialize Node
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/trade/${symbol.symbol}`);
+                  }}
+                  className="flex-1 py-2 bg-brand-amber/10 text-brand-amber rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-brand-amber hover:text-white transition-all border border-brand-amber/20"
+                >
+                  Trade
                 </button>
-                <button className="px-3 py-2 bg-brand-earth text-orange-100/40 rounded-lg hover:bg-brand-forest transition-all border border-orange-900/20">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/trade/${symbol.symbol}`);
+                  }}
+                  className="px-3 py-2 bg-brand-earth text-orange-100/40 rounded-lg hover:bg-brand-forest transition-all border border-orange-900/20"
+                >
                   <BarChart3 className="w-4 h-4" />
                 </button>
               </div>

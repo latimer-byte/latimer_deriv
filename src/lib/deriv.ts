@@ -102,14 +102,20 @@ class DerivService {
         this.socket.send(JSON.stringify(payload));
       };
 
-      if (this.socket && this.socket.readyState === WebSocket.CONNECTING) {
+      if (!this.socket || this.socket.readyState === WebSocket.CONNECTING || this.socket.readyState === WebSocket.CLOSED || this.socket.readyState === WebSocket.CLOSING) {
+        if (this.socket?.readyState === WebSocket.CLOSED || this.socket?.readyState === WebSocket.CLOSING || !this.socket) {
+          this.connect();
+        }
+
+        let attempts = 0;
         const checkConnection = setInterval(() => {
+          attempts++;
           if (this.socket?.readyState === WebSocket.OPEN) {
             clearInterval(checkConnection);
             executeSend();
-          } else if (this.socket?.readyState === WebSocket.CLOSED) {
+          } else if (attempts > 50) { // 5 seconds timeout
             clearInterval(checkConnection);
-            reject(new Error('WebSocket closed while connecting'));
+            reject(new Error('WebSocket connection timeout'));
           }
         }, 100);
       } else {

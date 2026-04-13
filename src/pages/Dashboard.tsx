@@ -146,14 +146,14 @@ export const Dashboard: React.FC = () => {
             className="px-6 py-3 bg-brand-amber text-white rounded-xl font-bold shadow-lg shadow-brand-amber/20 hover:bg-brand-amber/90 transition-all flex items-center gap-2"
           >
             <TrendingUp className="w-5 h-5" />
-            Initialize Trade
+            Trade
           </button>
           <button 
             onClick={() => navigate('/funds')}
             className="px-6 py-3 bg-brand-forest/40 text-orange-100/60 border border-orange-900/20 rounded-xl font-bold hover:bg-brand-forest transition-all flex items-center gap-2"
           >
             <Wallet className="w-5 h-5" />
-            Inject Capital
+            Deposit
           </button>
         </div>
       </div>
@@ -307,11 +307,20 @@ export const Dashboard: React.FC = () => {
         <div className="glass-card p-6 bg-brand-forest/40">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-bold text-white tracking-tight font-display">Recent Operations</h3>
-            <button className="text-brand-amber text-[10px] font-bold hover:underline uppercase tracking-widest">Log History</button>
+            <button 
+              onClick={() => navigate('/history')}
+              className="text-brand-amber text-[10px] font-bold hover:underline uppercase tracking-widest"
+            >
+              Log History
+            </button>
           </div>
           <div className="space-y-4">
             {displayTrades.slice(0, 4).map((trade, i) => (
-              <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-brand-forest transition-all group cursor-pointer border border-transparent hover:border-orange-900/20">
+              <div 
+                key={i} 
+                onClick={() => navigate('/history')}
+                className="flex items-center justify-between p-3 rounded-xl hover:bg-brand-forest transition-all group cursor-pointer border border-transparent hover:border-orange-900/20"
+              >
                 <div className="flex items-center gap-3">
                   <div className={cn(
                     "w-10 h-10 rounded-xl flex items-center justify-center border",
@@ -338,7 +347,10 @@ export const Dashboard: React.FC = () => {
               </div>
             ))}
           </div>
-          <button className="w-full mt-6 py-3 border border-dashed border-orange-900/20 rounded-xl text-orange-100/40 text-[10px] font-bold uppercase tracking-widest hover:border-brand-amber hover:text-brand-amber transition-all flex items-center justify-center gap-2">
+          <button 
+            onClick={() => navigate('/markets')}
+            className="w-full mt-6 py-3 border border-dashed border-orange-900/20 rounded-xl text-orange-100/40 text-[10px] font-bold uppercase tracking-widest hover:border-brand-amber hover:text-brand-amber transition-all flex items-center justify-center gap-2"
+          >
             Scan Markets <ChevronRight className="w-4 h-4" />
           </button>
         </div>

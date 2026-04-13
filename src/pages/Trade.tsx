@@ -27,7 +27,7 @@ export const Trade: React.FC = () => {
   const [selectedSymbol, setSelectedSymbol] = useState(urlSymbol || 'R_100');
   const [ticks, setTicks] = useState<any[]>([]);
   const [candles, setCandles] = useState<any[]>([]);
-  const [chartType, setChartType] = useState<'line' | 'candles'>('line');
+  const [chartType, setChartType] = useState<'line' | 'candles'>('candles');
   const [isTrading, setIsTrading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [riskLevel, setRiskLevel] = useState(45);
@@ -145,7 +145,8 @@ export const Trade: React.FC = () => {
         if (isWin) {
           updateGuestBalance(payout - amount, {
             pair: selectedSymbol,
-            type: type === 'CALL' ? 'Sword' : 'Defend',
+            symbol: selectedSymbol,
+            type: type === 'CALL' ? 'Buy' : 'Sell',
             amount: `+${formatCurrency(payout - amount, currency)}`,
             status: 'Win',
             price: entryPrice.toFixed(2),
@@ -156,7 +157,8 @@ export const Trade: React.FC = () => {
           const actualLoss = hedge ? amount * 0.5 : amount;
           updateGuestBalance(-actualLoss, {
             pair: selectedSymbol,
-            type: type === 'CALL' ? 'Sword' : 'Defend',
+            symbol: selectedSymbol,
+            type: type === 'CALL' ? 'Buy' : 'Sell',
             amount: `-${formatCurrency(actualLoss, currency)}`,
             status: hedge ? 'Shielded' : 'Loss',
             price: entryPrice.toFixed(2),
@@ -185,8 +187,8 @@ export const Trade: React.FC = () => {
               <Shield className="text-brand-amber w-12 h-12 animate-pulse" />
             </div>
             <div>
-              <h3 className="text-3xl font-bold text-white font-display">Initialize Aegis</h3>
-              <p className="text-orange-100/40 mt-2">Authentication required to access the Aegis Shield Network.</p>
+              <h3 className="text-3xl font-bold text-white font-display">Trade</h3>
+              <p className="text-orange-100/40 mt-2">Authentication required to access the Aegis Trade Network.</p>
             </div>
             <button 
               onClick={() => navigate('/profile')}

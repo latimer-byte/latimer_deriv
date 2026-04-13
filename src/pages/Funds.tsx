@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Wallet, 
   ArrowUpCircle, 
@@ -11,8 +12,9 @@ import {
   X,
   CheckCircle2
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, formatCurrency } from '@/lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
+import { useDeriv } from '@/contexts/DerivContext';
 
 const paymentMethods = [
   { id: 'mpesa', name: 'M-Pesa', icon: Smartphone, color: 'bg-green-600', description: 'Instant deposit via Safaricom' },
@@ -29,10 +31,27 @@ export const Funds: React.FC = () => {
   const [amount, setAmount] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const navigate = useNavigate();
+
+  const { balance, currency, updateGuestBalance } = useDeriv();
 
   const handleAction = () => {
+    const numAmount = parseFloat(amount);
+    if (isNaN(numAmount) || numAmount <= 0) return;
+
     setIsProcessing(true);
     setTimeout(() => {
+      // Update balance
+      const updateAmount = activeTab === 'deposit' ? numAmount : -numAmount;
+      updateGuestBalance(updateAmount, {
+        pair: activeTab === 'deposit' ? 'DEPOSIT' : 'WITHDRAWAL',
+        type: activeTab === 'deposit' ? 'Deposit' : 'Withdrawal',
+        amount: `${activeTab === 'deposit' ? '+' : '-'}${formatCurrency(numAmount, currency)}`,
+        status: 'Completed',
+        price: selectedMethod.name,
+        time: new Date().toISOString()
+      });
+
       setIsProcessing(false);
       setIsSuccess(true);
       setTimeout(() => {
@@ -47,7 +66,7 @@ export const Funds: React.FC = () => {
     <div className="max-w-4xl mx-auto space-y-8 pb-20 aegis-grid min-h-screen">
       <div className="text-center space-y-2">
         <h2 className="text-4xl font-bold text-white tracking-tight font-display">Capital Management</h2>
-        <p className="text-orange-100/40 uppercase tracking-widest text-[10px] font-bold">Neural Liquidity Injection & Extraction</p>
+        <p className="text-orange-100/40 uppercase tracking-widest text-[10px] font-bold">Neural Liquidity Deposit & Withdrawal</p>
       </div>
 
       <div className="flex justify-center">
@@ -62,7 +81,7 @@ export const Funds: React.FC = () => {
             )}
           >
             <ArrowUpCircle className="w-5 h-5" />
-            Inject
+            Deposit
           </button>
           <button 
             onClick={() => setActiveTab('withdraw')}
@@ -74,7 +93,7 @@ export const Funds: React.FC = () => {
             )}
           >
             <ArrowDownCircle className="w-5 h-5" />
-            Extract
+            Withdrawal
           </button>
         </div>
       </div>
@@ -147,7 +166,7 @@ export const Funds: React.FC = () => {
                   {isSuccess ? (
                     <div className="bg-brand-jungle/10 text-brand-jungle p-4 rounded-2xl flex items-center justify-center gap-2 font-bold uppercase tracking-widest text-xs border border-brand-jungle/20">
                       <CheckCircle2 className="w-6 h-6" />
-                      {activeTab === 'deposit' ? 'Injection' : 'Extraction'} Complete
+                      {activeTab === 'deposit' ? 'Deposit' : 'Withdrawal'} Complete
                     </div>
                   ) : (
                     <button 
@@ -155,7 +174,7 @@ export const Funds: React.FC = () => {
                       disabled={!amount || isProcessing}
                       className="w-full py-4 bg-brand-amber text-white rounded-2xl font-bold shadow-lg shadow-brand-amber/20 hover:bg-brand-amber/90 transition-all disabled:opacity-30 uppercase tracking-widest text-sm neon-glow-red"
                     >
-                      {isProcessing ? 'Processing Neural Link...' : `Confirm ${activeTab}`}
+                      {isProcessing ? 'Processing Neural Link...' : `Confirm ${activeTab === 'deposit' ? 'Deposit' : 'Withdrawal'}`}
                     </button>
                   )}
                 </div>
@@ -173,7 +192,10 @@ export const Funds: React.FC = () => {
             <h3 className="text-2xl font-bold tracking-tight font-display">Neural Support Node</h3>
             <p className="text-orange-100/60 text-sm max-w-md">Our global response team is active 24/7 to facilitate neural link stability across all African nodes.</p>
           </div>
-          <button className="px-8 py-4 bg-brand-amber text-white rounded-2xl font-bold shadow-xl hover:scale-105 transition-all whitespace-nowrap neon-glow-red">
+          <button 
+            onClick={() => navigate('/profile')}
+            className="px-8 py-4 bg-brand-amber text-white rounded-2xl font-bold shadow-xl hover:scale-105 transition-all whitespace-nowrap neon-glow-red"
+          >
             Connect Support
           </button>
         </div>

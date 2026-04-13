@@ -13,14 +13,25 @@ export const TradePanel: React.FC<TradePanelProps> = ({ symbol, onTrade, isTradi
   const { balance, currency } = useDeriv();
   const [amount, setAmount] = useState(10);
   const [useAegisShield, setUseAegisShield] = useState(true);
+  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date().toLocaleTimeString());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div className="glass-card p-6 space-y-6 bg-brand-forest/40 border-orange-900/20">
       <div className="flex items-center justify-between">
-        <h4 className="text-lg font-bold flex items-center gap-2 font-display">
-          <Zap className="w-5 h-5 text-brand-amber" />
-          Command Center
-        </h4>
+        <div className="flex flex-col">
+          <h4 className="text-lg font-bold flex items-center gap-2 font-display">
+            <Zap className="w-5 h-5 text-brand-amber" />
+            Trade
+          </h4>
+          <span className="text-[10px] font-mono text-orange-100/20">{currentTime}</span>
+        </div>
         <div className="flex items-center gap-1 text-[10px] font-bold text-orange-100/40 uppercase tracking-widest">
           <Info className="w-3 h-3" />
           Instant Execution
@@ -84,7 +95,7 @@ export const TradePanel: React.FC<TradePanelProps> = ({ symbol, onTrade, isTradi
         >
           <div className="relative z-10 flex flex-col items-center gap-1">
             <Sword className="w-6 h-6 rotate-45" />
-            <span className="font-display tracking-wider">ATTACK</span>
+            <span className="font-display tracking-wider">BUY</span>
             <span className="text-[10px] opacity-60 font-bold uppercase tracking-widest">Higher</span>
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
@@ -97,7 +108,7 @@ export const TradePanel: React.FC<TradePanelProps> = ({ symbol, onTrade, isTradi
         >
           <div className="relative z-10 flex flex-col items-center gap-1">
             <Shield className="w-6 h-6" />
-            <span className="font-display tracking-wider">DEFEND</span>
+            <span className="font-display tracking-wider">SELL</span>
             <span className="text-[10px] opacity-60 font-bold uppercase tracking-widest">Lower</span>
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />

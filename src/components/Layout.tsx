@@ -90,9 +90,14 @@ export const Layout: React.FC = () => {
           <div className="w-8 h-8 bg-brand-amber rounded-lg flex items-center justify-center neon-glow-red">
             <TrendingUp className="text-white w-5 h-5" />
           </div>
-          <h1 className="text-xl font-bold text-white font-display">Aegis Trader</h1>
+          <div>
+            <h1 className="text-sm font-bold text-white font-display leading-tight">Aegis Trader</h1>
+            <p className="text-[10px] font-mono font-bold text-brand-amber leading-tight">
+              {new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(balance)}
+            </p>
+          </div>
         </div>
-        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white">
+        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white p-2">
           {isMobileMenuOpen ? <X /> : <Menu />}
         </button>
       </header>
