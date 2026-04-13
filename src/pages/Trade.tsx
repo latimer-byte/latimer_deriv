@@ -77,10 +77,8 @@ export const Trade: React.FC = () => {
     } else {
       deriv.send({
         ticks_history: selectedSymbol,
-        adjust_start_time: 1,
         count: 100,
         end: 'latest',
-        start: 1,
         style: 'candles',
         granularity: 60
       }).then(response => {

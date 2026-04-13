@@ -22,43 +22,71 @@ class DerivService {
   private callbacks: Map<string, (data: DerivResponse) => void> = new Map();
   private messageId: number = 0;
 
+  private pingInterval: any = null;
+
   constructor() {
     this.connect();
   }
 
   private connect() {
+    if (this.socket) {
+      this.socket.onopen = null;
+      this.socket.onmessage = null;
+      this.socket.onclose = null;
+      this.socket.onerror = null;
+      try {
+        this.socket.close();
+      } catch (e) {}
+    }
+
     const endpoint = `wss://ws.binaryws.com/websockets/v3?app_id=${this.appId}`;
     this.socket = new WebSocket(endpoint);
 
     this.socket.onopen = () => {
       console.log('Deriv WebSocket connected');
-      // Send ping every 30 seconds to keep connection alive
-      setInterval(() => this.send({ ping: 1 }), 30000);
+      if (this.pingInterval) clearInterval(this.pingInterval);
+      this.pingInterval = setInterval(() => {
+        if (this.socket?.readyState === WebSocket.OPEN) {
+          this.send({ ping: 1 }).catch(() => {});
+        }
+      }, 30000);
     };
 
     this.socket.onmessage = (event) => {
-      const response: DerivResponse = JSON.parse(event.data);
-      const reqId = response.req_id?.toString();
+      try {
+        const response: DerivResponse = JSON.parse(event.data);
+        const reqId = response.req_id?.toString();
 
-      if (reqId && this.callbacks.has(reqId)) {
-        const callback = this.callbacks.get(reqId);
-        if (callback) {
-          callback(response);
-          this.callbacks.delete(reqId);
+        if (reqId && this.callbacks.has(reqId)) {
+          const callback = this.callbacks.get(reqId);
+          if (callback) {
+            callback(response);
+            this.callbacks.delete(reqId);
+          }
         }
-      }
 
-      // Handle subscription messages (ticks, ohlc, etc.)
-      if (response.msg_type === 'tick') {
-        this.broadcast('tick', response);
-      } else if (response.msg_type === 'ohlc') {
-        this.broadcast('ohlc', response);
+        // Handle subscription messages (ticks, ohlc, etc.)
+        if (response.msg_type === 'tick') {
+          this.broadcast('tick', response);
+        } else if (response.msg_type === 'ohlc') {
+          this.broadcast('ohlc', response);
+        }
+      } catch (e) {
+        console.error('Error parsing Deriv message:', e);
       }
     };
 
     this.socket.onclose = () => {
       console.log('Deriv WebSocket disconnected, reconnecting...');
+      if (this.pingInterval) {
+        clearInterval(this.pingInterval);
+        this.pingInterval = null;
+      }
       setTimeout(() => this.connect(), 5000);
+    };
+
+    this.socket.onerror = (error) => {
+      console.error('Deriv WebSocket error:', error);
     };
   }
 

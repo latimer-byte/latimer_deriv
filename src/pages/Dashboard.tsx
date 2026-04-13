@@ -75,38 +75,41 @@ export const Dashboard: React.FC = () => {
     <div className="space-y-8 pb-20 aegis-grid min-h-screen">
       {!loginId && (
         <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="glass-card p-8 bg-gradient-to-br from-brand-amber/20 to-brand-terracotta/20 text-white flex flex-col md:flex-row items-center justify-between gap-8 border-brand-amber/30 neon-glow-red"
+          className="glass-card p-10 bg-gradient-to-br from-brand-amber/10 via-brand-forest/40 to-brand-terracotta/10 text-white flex flex-col md:flex-row items-center justify-between gap-10 border-brand-amber/20"
         >
-          <div className="space-y-4 text-center md:text-left">
-            <h2 className="text-4xl font-bold tracking-tight font-display">Initialize Aegis Protocols</h2>
-            <p className="text-orange-100/60 text-lg max-w-xl">The Shield Network is offline. Connect your identity node to begin capital protection and market execution.</p>
-            <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-              <div className="flex items-center gap-2 bg-brand-earth/50 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-orange-900/20">
-                <CheckCircle2 className="w-4 h-4 text-brand-amber" /> Neural Execution
+          <div className="space-y-6 text-center md:text-left flex-1">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-amber/10 border border-brand-amber/20 text-[10px] font-bold text-brand-amber uppercase tracking-widest">
+              <Shield className="w-3 h-3" /> Secure Trading Environment
+            </div>
+            <h2 className="text-5xl font-bold tracking-tight font-display leading-tight">Master the Markets with <span className="text-brand-amber">Aegis Precision</span></h2>
+            <p className="text-orange-100/60 text-lg max-w-2xl leading-relaxed">Connect your Deriv account to access institutional-grade trading tools, real-time analytics, and advanced capital protection protocols.</p>
+            <div className="flex flex-wrap gap-6 justify-center md:justify-start">
+              <div className="flex items-center gap-2 text-xs font-bold text-orange-100/40 uppercase tracking-widest">
+                <CheckCircle2 className="w-4 h-4 text-brand-jungle" /> Real-time Execution
               </div>
-              <div className="flex items-center gap-2 bg-brand-earth/50 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-orange-900/20">
-                <CheckCircle2 className="w-4 h-4 text-brand-amber" /> Shield Protection
+              <div className="flex items-center gap-2 text-xs font-bold text-orange-100/40 uppercase tracking-widest">
+                <CheckCircle2 className="w-4 h-4 text-brand-jungle" /> Advanced Risk Management
               </div>
-              <div className="flex items-center gap-2 bg-brand-earth/50 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-orange-900/20">
-                <CheckCircle2 className="w-4 h-4 text-brand-amber" /> Global Node Access
+              <div className="flex items-center gap-2 text-xs font-bold text-orange-100/40 uppercase tracking-widest">
+                <CheckCircle2 className="w-4 h-4 text-brand-jungle" /> 24/7 Market Access
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-3 w-full md:w-auto">
+          <div className="flex flex-col gap-4 w-full md:w-72 shrink-0">
             <button 
               onClick={() => navigate('/profile')}
-              className="px-10 py-5 bg-brand-amber text-white rounded-2xl font-bold text-xl shadow-xl shadow-brand-amber/20 hover:scale-105 transition-all whitespace-nowrap neon-glow-red"
+              className="w-full py-5 bg-brand-amber text-white rounded-2xl font-bold text-lg shadow-xl shadow-brand-amber/20 hover:bg-brand-amber/90 transition-all"
             >
-              Connect Identity
+              Get Started
             </button>
             <a 
               href="https://deriv.com/signup/" 
               target="_blank"
-              className="px-10 py-3 bg-brand-earth/50 text-orange-100/40 border border-orange-900/20 rounded-xl font-bold text-center hover:bg-brand-forest transition-all text-sm"
+              className="w-full py-4 bg-white/5 text-white border border-white/10 rounded-2xl font-bold text-center hover:bg-white/10 transition-all text-sm"
             >
-              Register Node
+              Create Account
             </a>
           </div>
         </motion.div>
@@ -117,28 +120,27 @@ export const Dashboard: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         onClick={() => navigate('/roadmap')}
-        className="glass-card p-6 bg-brand-forest/40 text-white flex flex-col md:flex-row items-center justify-between gap-6 cursor-pointer hover:shadow-2xl transition-all overflow-hidden relative group border-brand-terracotta/20"
+        className="glass-card p-8 bg-brand-forest/20 text-white flex flex-col md:flex-row items-center justify-between gap-6 cursor-pointer hover:bg-brand-forest/30 transition-all border-brand-terracotta/10"
       >
-        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-terracotta/5 rounded-full -mr-32 -mt-32 blur-3xl group-hover:scale-110 transition-transform" />
-        <div className="flex items-center gap-6 relative z-10">
-          <div className="w-16 h-16 rounded-2xl bg-brand-terracotta flex items-center justify-center shadow-lg shadow-brand-terracotta/20">
-            <Rocket className="w-8 h-8 text-white" />
+        <div className="flex items-center gap-6">
+          <div className="w-14 h-14 rounded-2xl bg-brand-terracotta/20 border border-brand-terracotta/30 flex items-center justify-center">
+            <Rocket className="w-7 h-7 text-brand-terracotta" />
           </div>
           <div>
-            <h3 className="text-2xl font-bold tracking-tight font-display">The Aegis Roadmap</h3>
-            <p className="text-orange-100/40">Neural network expansion and multi-chain shield integration protocols.</p>
+            <h3 className="text-2xl font-bold tracking-tight font-display">Platform Evolution</h3>
+            <p className="text-orange-100/40 text-sm">Explore upcoming features, multi-chain integrations, and network expansion protocols.</p>
           </div>
         </div>
-        <button className="px-8 py-3 bg-brand-terracotta text-white rounded-xl font-bold shadow-xl relative z-10 whitespace-nowrap hover:scale-105 transition-all">
-          View Protocols
+        <button className="px-8 py-3 bg-brand-terracotta/10 text-brand-terracotta border border-brand-terracotta/20 rounded-xl font-bold hover:bg-brand-terracotta hover:text-white transition-all whitespace-nowrap">
+          View Roadmap
         </button>
       </motion.div>
 
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h2 className="text-4xl font-bold text-white tracking-tight font-display">Command Center</h2>
-          <p className="text-orange-100/40 mt-1 uppercase tracking-[0.2em] text-[10px] font-bold">Real-time Node Diagnostics</p>
+          <h2 className="text-4xl font-bold text-white tracking-tight font-display">Market Overview</h2>
+          <p className="text-orange-100/40 mt-1 uppercase tracking-[0.2em] text-[10px] font-bold">Real-time Trading Performance & Analytics</p>
         </div>
         <div className="flex gap-3">
           <button 
@@ -214,14 +216,11 @@ export const Dashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Chart */}
-        <div className="lg:col-span-2 glass-card p-6 relative overflow-hidden bg-brand-forest/40">
-          <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-            <TrendingUp className="w-32 h-32 text-brand-terracotta" />
-          </div>
+        <div className="lg:col-span-2 glass-card p-8 relative overflow-hidden bg-brand-forest/40 border-orange-900/10">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 relative z-10">
             <div>
-              <h3 className="text-xl font-bold text-white tracking-tight font-display">Neural Growth Matrix</h3>
-              <p className="text-[10px] text-orange-100/40 uppercase tracking-widest font-bold">Historical Performance Node</p>
+              <h3 className="text-xl font-bold text-white tracking-tight font-display">Performance Analytics</h3>
+              <p className="text-[10px] text-orange-100/40 uppercase tracking-widest font-bold">Historical Yield Matrix</p>
             </div>
             <div className="flex bg-brand-earth p-1 rounded-xl border border-orange-900/20">
               {['1D', '1W', '1M', '1Y', 'ALL'].map(t => (
@@ -304,14 +303,14 @@ export const Dashboard: React.FC = () => {
         </div>
 
         {/* Recent Activity */}
-        <div className="glass-card p-6 bg-brand-forest/40">
+        <div className="glass-card p-8 bg-brand-forest/40 border-orange-900/10">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-white tracking-tight font-display">Recent Operations</h3>
+            <h3 className="text-xl font-bold text-white tracking-tight font-display">Recent Activity</h3>
             <button 
               onClick={() => navigate('/history')}
               className="text-brand-amber text-[10px] font-bold hover:underline uppercase tracking-widest"
             >
-              Log History
+              View All
             </button>
           </div>
           <div className="space-y-4">

@@ -35,15 +35,15 @@ export const Layout: React.FC = () => {
       <div className="absolute inset-0 african-pattern pointer-events-none" />
 
       {/* Sidebar - Desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-brand-forest/80 backdrop-blur-xl border-r border-orange-900/20 z-10">
-        <div className="p-6 flex items-center gap-3">
-          <div className="w-10 h-10 bg-brand-amber rounded-xl flex items-center justify-center shadow-lg shadow-brand-amber/20 neon-glow-red">
+      <aside className="hidden md:flex flex-col w-64 bg-brand-forest/95 backdrop-blur-xl border-r border-orange-900/10 z-10">
+        <div className="p-8 flex items-center gap-3">
+          <div className="w-10 h-10 bg-brand-amber rounded-xl flex items-center justify-center shadow-lg shadow-brand-amber/20">
             <TrendingUp className="text-white w-6 h-6" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white font-display">Aegis Trader</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-white font-display">Aegis</h1>
         </div>
 
-        <nav className="flex-1 px-4 space-y-2 mt-4">
+        <nav className="flex-1 px-4 space-y-1 mt-4">
           {navItems.map((item) => (
             <NavLink
               key={item.path}
@@ -51,47 +51,38 @@ export const Layout: React.FC = () => {
               className={({ isActive }) => cn(
                 "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group",
                 isActive 
-                  ? "bg-brand-amber text-white shadow-lg shadow-brand-amber/20 neon-glow-red" 
-                  : "text-orange-100/40 hover:bg-brand-forest hover:text-white"
+                  ? "bg-brand-amber/10 text-brand-amber border border-brand-amber/20" 
+                  : "text-orange-100/30 hover:bg-brand-forest hover:text-white"
               )}
             >
-              <item.icon className="w-5 h-5" />
-              <span className="font-bold uppercase tracking-widest text-[10px]">{item.label}</span>
+              <item.icon className="w-4 h-4" />
+              <span className="font-bold uppercase tracking-[0.15em] text-[9px]">{item.label}</span>
             </NavLink>
           ))}
         </nav>
 
-        <div className="p-4 border-t border-orange-900/20">
+        <div className="p-6 border-t border-orange-900/10">
           <NavLink
             to="/profile"
             className={({ isActive }) => cn(
               "flex items-center gap-3 px-4 py-3 rounded-xl transition-all group",
-              isActive ? "bg-brand-forest text-white" : "text-orange-100/40 hover:bg-brand-forest hover:text-white"
+              isActive ? "bg-brand-forest text-white" : "text-orange-100/30 hover:bg-brand-forest hover:text-white"
             )}
           >
-            <User className="w-5 h-5" />
-            <span className="font-bold uppercase tracking-widest text-[10px]">{loginId ? 'Profile' : 'Login / Sign Up'}</span>
+            <User className="w-4 h-4" />
+            <span className="font-bold uppercase tracking-[0.15em] text-[9px]">{loginId ? 'Account' : 'Sign In'}</span>
           </NavLink>
-          {loginId && (
-            <button 
-              onClick={logout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-brand-terracotta hover:bg-brand-terracotta/10 transition-all mt-2"
-            >
-              <LogOut className="w-5 h-5" />
-              <span className="font-bold uppercase tracking-widest text-[10px]">Logout</span>
-            </button>
-          )}
         </div>
       </aside>
 
       {/* Mobile Header */}
-      <header className="md:hidden bg-brand-forest/90 backdrop-blur-xl border-b border-orange-900/20 p-4 flex items-center justify-between z-20">
+      <header className="md:hidden bg-brand-forest/95 backdrop-blur-xl border-b border-orange-900/10 p-4 flex items-center justify-between z-20">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-brand-amber rounded-lg flex items-center justify-center neon-glow-red">
+          <div className="w-8 h-8 bg-brand-amber rounded-lg flex items-center justify-center">
             <TrendingUp className="text-white w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-sm font-bold text-white font-display leading-tight">Aegis Trader</h1>
+            <h1 className="text-sm font-bold text-white font-display leading-tight">Aegis</h1>
             <p className="text-[10px] font-mono font-bold text-brand-amber leading-tight">
               {new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(balance)}
             </p>
@@ -160,28 +151,32 @@ export const Layout: React.FC = () => {
       {/* Main Content */}
       <main className="flex-1 flex flex-col z-10 overflow-auto">
         {/* Top Bar */}
-        <header className="hidden md:flex items-center justify-between px-8 py-4 bg-brand-forest/50 backdrop-blur-sm border-b border-orange-900/20">
+        <header className="hidden md:flex items-center justify-between px-8 py-4 bg-brand-forest/30 backdrop-blur-sm border-b border-orange-900/10">
           <div className="flex items-center gap-4">
-            <span className="text-sm text-orange-100/40 font-medium">Welcome back, <span className="text-white">{loginId || 'Trader'}</span></span>
+            <span className="text-[10px] text-orange-100/20 font-bold uppercase tracking-widest">System Status: <span className="text-brand-jungle">Operational</span></span>
             {isGuest ? (
-              <span className="px-2 py-0.5 bg-brand-amber/10 text-brand-amber text-[10px] font-bold uppercase tracking-wider rounded border border-brand-amber/20">
-                Aegis Shield Active
+              <span className="px-2 py-0.5 bg-brand-amber/10 text-brand-amber text-[9px] font-bold uppercase tracking-widest rounded border border-brand-amber/20">
+                Simulation Mode
               </span>
             ) : isDemo && loginId ? (
-              <span className="px-2 py-0.5 bg-brand-amber/10 text-brand-amber text-[10px] font-bold uppercase tracking-wider rounded border border-brand-amber/20">
-                Simulation Mode
+              <span className="px-2 py-0.5 bg-brand-amber/10 text-brand-amber text-[9px] font-bold uppercase tracking-widest rounded border border-brand-amber/20">
+                Virtual Account
+              </span>
+            ) : loginId ? (
+              <span className="px-2 py-0.5 bg-brand-terracotta/10 text-brand-terracotta text-[9px] font-bold uppercase tracking-widest rounded border border-brand-terracotta/20">
+                Live Network
               </span>
             ) : null}
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-8">
             <div className="text-right">
-              <p className="text-xs text-orange-100/40 font-medium uppercase tracking-wider">Available Credits</p>
+              <p className="text-[9px] text-orange-100/20 font-bold uppercase tracking-widest">Balance</p>
               <p className="text-xl font-mono font-bold text-white">
                 {new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(balance)}
               </p>
             </div>
-            <div className="w-10 h-10 rounded-full bg-brand-forest flex items-center justify-center border border-orange-900/20">
-              <User className="text-orange-100/40 w-5 h-5" />
+            <div className="w-10 h-10 rounded-xl bg-brand-forest/50 flex items-center justify-center border border-orange-900/10">
+              <User className="text-orange-100/20 w-5 h-5" />
             </div>
           </div>
         </header>
