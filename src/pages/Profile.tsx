@@ -42,8 +42,8 @@ export const Profile: React.FC = () => {
     <div className="max-w-6xl mx-auto space-y-8 pb-20 aegis-grid min-h-screen p-4 md:p-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-4xl font-bold text-white tracking-tight font-display">Account Settings</h2>
-          <p className="text-orange-100/40 mt-1 uppercase tracking-[0.2em] text-[10px] font-bold">Manage your Aegis Network Identity & Security</p>
+          <h2 className="text-4xl font-bold text-aegis-text tracking-tight font-display">Account Settings</h2>
+          <p className="text-aegis-text-muted mt-1 uppercase tracking-[0.2em] text-[10px] font-bold">Manage your Aegis Network Identity & Security</p>
         </div>
         {loginId && (
           <button 
@@ -61,14 +61,14 @@ export const Profile: React.FC = () => {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="glass-card p-8 bg-brand-amber/5 border-brand-amber/20 text-white space-y-6"
+            className="glass-card p-8 bg-brand-amber/5 border-brand-amber/20 text-aegis-text space-y-6"
           >
             <div className="w-14 h-14 rounded-2xl bg-brand-amber/20 border border-brand-amber/30 flex items-center justify-center">
               <Zap className="w-7 h-7 text-brand-amber" />
             </div>
             <div>
               <h3 className="text-2xl font-bold font-display">Simulation Account</h3>
-              <p className="text-orange-100/40 mt-2 text-sm leading-relaxed">Experience the Aegis Network with 10,000 virtual credits. Ideal for testing Sword & Shield strategies without capital risk.</p>
+              <p className="text-aegis-text-secondary mt-2 text-sm leading-relaxed">Experience the Aegis Network with 10,000 virtual credits. Ideal for testing Sword & Shield strategies without capital risk.</p>
             </div>
             <button 
               onClick={setGuestMode}
@@ -82,14 +82,14 @@ export const Profile: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="glass-card p-8 bg-brand-terracotta/5 border-brand-terracotta/20 text-white space-y-6"
+            className="glass-card p-8 bg-brand-terracotta/5 border-brand-terracotta/20 text-aegis-text space-y-6"
           >
             <div className="w-14 h-14 rounded-2xl bg-brand-terracotta/20 border border-brand-terracotta/30 flex items-center justify-center">
               <User className="w-7 h-7 text-brand-terracotta" />
             </div>
             <div>
               <h3 className="text-2xl font-bold font-display">Live Network Link</h3>
-              <p className="text-orange-100/40 mt-2 text-sm leading-relaxed">Connect your primary Deriv identity to execute real-market capital protocols. Full security clearance required.</p>
+              <p className="text-aegis-text-secondary mt-2 text-sm leading-relaxed">Connect your primary Deriv identity to execute real-market capital protocols. Full security clearance required.</p>
             </div>
             <a 
               href="https://deriv.com/signup/" 
@@ -119,7 +119,7 @@ export const Profile: React.FC = () => {
                 "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all text-[10px] uppercase tracking-[0.15em]",
                 item.active 
                   ? "bg-brand-amber/10 text-brand-amber border border-brand-amber/20" 
-                  : "text-orange-100/30 hover:bg-brand-forest hover:text-white"
+                  : "text-aegis-text-muted hover:bg-brand-forest hover:text-aegis-text"
               )}
             >
               <item.icon className="w-4 h-4" />
@@ -131,64 +131,64 @@ export const Profile: React.FC = () => {
         {/* Content */}
         <div className="md:col-span-3 space-y-8">
           {/* Personal Details Section */}
-          <div className="glass-card p-8 space-y-8 bg-brand-forest/40 border-orange-900/10">
+          <div className="glass-card p-8 space-y-8">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-brand-earth flex items-center justify-center border border-orange-900/20">
+              <div className="w-12 h-12 rounded-xl bg-brand-earth flex items-center justify-center border border-aegis-border">
                 <User className="text-brand-amber w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-bold font-display text-white">Personal Details</h3>
-                <p className="text-sm text-orange-100/40">Your Aegis Network identity information.</p>
+                <h3 className="text-xl font-bold font-display text-aegis-text">Personal Details</h3>
+                <p className="text-sm text-aegis-text-secondary">Your Aegis Network identity information.</p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-orange-100/20 uppercase tracking-widest">Full Name</label>
-                <p className="text-white font-bold">{loginId ? 'Aegis Operator' : 'Unidentified'}</p>
+                <label className="text-[10px] font-bold text-aegis-text-muted uppercase tracking-widest">Full Name</label>
+                <p className="text-aegis-text font-bold">{loginId ? 'Aegis Operator' : 'Unidentified'}</p>
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-orange-100/20 uppercase tracking-widest">Email Address</label>
-                <p className="text-white font-bold">{loginId ? 'operator@aegis.network' : 'Not linked'}</p>
+                <label className="text-[10px] font-bold text-aegis-text-muted uppercase tracking-widest">Email Address</label>
+                <p className="text-aegis-text font-bold">{loginId ? 'operator@aegis.network' : 'Not linked'}</p>
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-orange-100/20 uppercase tracking-widest">Country</label>
-                <p className="text-white font-bold">Global Node</p>
+                <label className="text-[10px] font-bold text-aegis-text-muted uppercase tracking-widest">Country</label>
+                <p className="text-aegis-text font-bold">Global Node</p>
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-orange-100/20 uppercase tracking-widest">Account Type</label>
+                <label className="text-[10px] font-bold text-aegis-text-muted uppercase tracking-widest">Account Type</label>
                 <p className="text-brand-amber font-bold">{isGuest ? 'Simulation' : isDemo ? 'Virtual' : 'Live'}</p>
               </div>
             </div>
           </div>
 
           {/* API Token Section */}
-          <div className="glass-card p-8 space-y-6 bg-brand-forest/40 border-orange-900/10">
+          <div className="glass-card p-8 space-y-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-brand-earth flex items-center justify-center border border-orange-900/20">
+              <div className="w-12 h-12 rounded-xl bg-brand-earth flex items-center justify-center border border-aegis-border">
                 <Key className="text-brand-amber w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-bold font-display text-white">API Token Management</h3>
-                <p className="text-sm text-orange-100/40">Securely link your Deriv account to the Aegis interface.</p>
+                <h3 className="text-xl font-bold font-display text-aegis-text">API Token Management</h3>
+                <p className="text-sm text-aegis-text-secondary">Securely link your Deriv account to the Aegis interface.</p>
               </div>
             </div>
 
             <form onSubmit={handleSaveToken} className="space-y-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-orange-100/20 uppercase tracking-widest block">Deriv API Token</label>
+                <label className="text-[10px] font-bold text-aegis-text-muted uppercase tracking-widest block">Deriv API Token</label>
                 <div className="relative">
                   <input 
                     type="password" 
                     value={token}
                     onChange={(e) => setToken(e.target.value)}
                     placeholder="Enter your 15-character token..."
-                    className="w-full bg-brand-earth/50 border border-orange-900/20 rounded-xl py-4 px-6 text-white outline-none focus:border-brand-amber/50 font-mono placeholder:text-orange-100/10 transition-all"
+                    className="w-full bg-brand-earth/50 border border-aegis-border rounded-xl py-4 px-6 text-aegis-text outline-none focus:border-brand-amber/50 font-mono placeholder:text-aegis-text-muted transition-all"
                   />
                 </div>
                 <div className="flex items-start gap-2 mt-3 p-4 bg-brand-amber/5 rounded-xl border border-brand-amber/10">
                   <AlertCircle className="w-4 h-4 text-brand-amber shrink-0 mt-0.5" />
-                  <p className="text-[10px] text-orange-100/40 leading-relaxed">
+                  <p className="text-[10px] text-aegis-text-muted leading-relaxed">
                     To generate a token, go to the <a href="https://app.deriv.com/account/api-token" target="_blank" className="text-brand-amber hover:underline font-bold">Deriv API Token page</a>. Select "Read" and "Trade" scopes for full Aegis functionality.
                   </p>
                 </div>
@@ -227,14 +227,14 @@ export const Profile: React.FC = () => {
           </div>
 
           {/* Account Status */}
-          <div className="glass-card p-8 space-y-6 bg-brand-forest/40 border-orange-900/10">
+          <div className="glass-card p-8 space-y-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-brand-earth flex items-center justify-center border border-orange-900/20">
+              <div className="w-12 h-12 rounded-xl bg-brand-earth flex items-center justify-center border border-aegis-border">
                 <Shield className="text-brand-terracotta w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-bold font-display text-white">Account Status</h3>
-                <p className="text-sm text-orange-100/40">Real-time connection diagnostics.</p>
+                <h3 className="text-xl font-bold font-display text-aegis-text">Account Status</h3>
+                <p className="text-sm text-aegis-text-secondary">Real-time connection diagnostics.</p>
               </div>
             </div>
 
@@ -245,14 +245,14 @@ export const Profile: React.FC = () => {
                 { label: 'Mode', value: isGuest ? 'Simulation' : isDemo ? 'Virtual' : 'Live' },
                 { label: 'Status', value: loginId ? 'Connected' : 'Disconnected', status: !!loginId },
               ].map((stat, i) => (
-                <div key={i} className="p-4 bg-brand-earth/30 rounded-xl border border-orange-900/10">
-                  <p className="text-[9px] text-orange-100/20 font-bold uppercase tracking-widest mb-1">{stat.label}</p>
+                <div key={i} className="p-4 bg-brand-earth/30 rounded-xl border border-aegis-border">
+                  <p className="text-[9px] text-aegis-text-muted font-bold uppercase tracking-widest mb-1">{stat.label}</p>
                   <div className="flex items-center gap-2">
                     {stat.status !== undefined && (
-                      <div className={cn("w-1.5 h-1.5 rounded-full", stat.status ? "bg-brand-jungle shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-orange-100/10")} />
+                      <div className={cn("w-1.5 h-1.5 rounded-full", stat.status ? "bg-brand-jungle shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-aegis-text-muted/10")} />
                     )}
                     <p className={cn(
-                      "font-bold text-white text-xs",
+                      "font-bold text-aegis-text text-xs",
                       stat.mono && "font-mono"
                     )}>{stat.value}</p>
                   </div>

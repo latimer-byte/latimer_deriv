@@ -53,17 +53,17 @@ export const Markets: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center py-20 space-y-4 aegis-grid min-h-screen">
         <div className="w-12 h-12 border-4 border-brand-amber border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-orange-100/40 font-bold uppercase tracking-widest text-xs">Scanning Neural Markets...</p>
+        <p className="text-aegis-text-muted font-bold uppercase tracking-widest text-xs">Scanning Neural Markets...</p>
       </div>
     );
   }
 
   if (error && activeSymbols.length === 0) {
     return (
-      <div className="text-center py-20 glass-card bg-brand-forest/40 border-brand-terracotta/20 aegis-grid min-h-screen">
+      <div className="text-center py-20 glass-card border-brand-terracotta/20 aegis-grid min-h-screen">
         <AlertCircle className="w-16 h-16 text-brand-terracotta mx-auto mb-4" />
-        <h3 className="text-xl text-white font-bold tracking-tight font-display">Neural Link Severed</h3>
-        <p className="text-orange-100/40 mt-2">{error}</p>
+        <h3 className="text-xl text-aegis-text font-bold tracking-tight font-display">Neural Link Severed</h3>
+        <p className="text-aegis-text-secondary mt-2">{error}</p>
         <button 
           onClick={() => window.location.reload()}
           className="mt-6 px-6 py-2 bg-brand-amber text-white rounded-xl font-bold hover:bg-brand-amber/90 transition-all shadow-lg shadow-brand-amber/20 neon-glow-red"
@@ -105,13 +105,13 @@ export const Markets: React.FC = () => {
       {/* Search & Grid */}
       <div className="space-y-6">
         <div className="relative max-w-xl">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-100/20 w-5 h-5" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-aegis-text-muted w-5 h-5" />
           <input 
             type="text" 
             placeholder="Search asset nodes (e.g. BTC, Gold, Volatility)..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-brand-forest/40 border border-orange-900/20 rounded-2xl py-4 pl-12 pr-6 text-lg outline-none focus:ring-2 focus:ring-brand-amber/20 shadow-sm text-white placeholder:text-orange-100/10"
+            className="w-full bg-brand-forest/40 border border-aegis-border rounded-2xl py-4 pl-12 pr-6 text-lg outline-none focus:ring-2 focus:ring-brand-amber/20 shadow-sm text-aegis-text placeholder:text-aegis-text-muted"
           />
         </div>
 
@@ -122,31 +122,31 @@ export const Markets: React.FC = () => {
               onClick={() => {
                 navigate(`/trade/${symbol.symbol}`);
               }}
-              className="glass-card p-6 group cursor-pointer hover:border-brand-amber/50 active:scale-[0.98] transition-all bg-brand-forest/40 border-orange-900/20"
+              className="glass-card p-6 group cursor-pointer hover:border-brand-amber/50 active:scale-[0.98] transition-all"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-brand-earth flex items-center justify-center border border-orange-900/20 group-hover:bg-brand-amber/10 transition-all">
+                  <div className="w-10 h-10 rounded-xl bg-brand-earth flex items-center justify-center border border-aegis-border group-hover:bg-brand-amber/10 transition-all">
                     <TrendingUp className="text-brand-terracotta w-5 h-5 group-hover:text-brand-amber" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-white text-sm tracking-tight font-display">{symbol.display_name}</h4>
-                    <p className="text-[10px] text-orange-100/40 uppercase tracking-widest font-bold">{symbol.market_display_name}</p>
+                    <h4 className="font-bold text-aegis-text text-sm tracking-tight font-display">{symbol.display_name}</h4>
+                    <p className="text-[10px] text-aegis-text-muted uppercase tracking-widest font-bold">{symbol.market_display_name}</p>
                   </div>
                 </div>
-                <button className="text-orange-100/10 hover:text-brand-amber transition-all">
+                <button className="text-aegis-text-muted/10 hover:text-brand-amber transition-all">
                   <Star className="w-5 h-5" />
                 </button>
               </div>
               
               <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-[10px] text-orange-100/40 mb-1 font-bold uppercase tracking-widest">Spread</p>
-                  <p className="font-mono text-sm font-bold text-white">0.00012</p>
+                  <p className="text-[10px] text-aegis-text-muted mb-1 font-bold uppercase tracking-widest">Spread</p>
+                  <p className="font-mono text-sm font-bold text-aegis-text">0.00012</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] text-orange-100/40 mb-1 font-bold uppercase tracking-widest">Leverage</p>
-                  <p className="font-bold text-white font-mono text-sm">1:1000</p>
+                  <p className="text-[10px] text-aegis-text-muted mb-1 font-bold uppercase tracking-widest">Leverage</p>
+                  <p className="font-bold text-aegis-text font-mono text-sm">1:1000</p>
                 </div>
               </div>
 

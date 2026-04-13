@@ -185,8 +185,8 @@ export const Trade: React.FC = () => {
               <Shield className="text-brand-amber w-12 h-12 animate-pulse" />
             </div>
             <div>
-              <h3 className="text-3xl font-bold text-white font-display">Trade</h3>
-              <p className="text-orange-100/40 mt-2">Authentication required to access the Aegis Trade Network.</p>
+              <h3 className="text-3xl font-bold text-aegis-text font-display">Trade</h3>
+              <p className="text-aegis-text-secondary mt-2">Authentication required to access the Aegis Trade Network.</p>
             </div>
             <button 
               onClick={() => navigate('/profile')}
@@ -201,15 +201,15 @@ export const Trade: React.FC = () => {
       <div className={cn("grid grid-cols-1 lg:grid-cols-4 gap-8", !loginId && "opacity-20 pointer-events-none grayscale")}>
         {/* Left Column: Market Selector */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="glass-card p-4 bg-brand-forest/40 border-orange-900/20">
+          <div className="glass-card p-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-100/20 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-aegis-text-muted w-4 h-4" />
               <input 
                 type="text" 
                 placeholder="Search Aegis Assets..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-brand-earth border border-orange-900/20 rounded-xl py-2 pl-10 pr-4 text-sm text-white outline-none focus:ring-2 focus:ring-brand-amber/20 placeholder:text-orange-100/10"
+                className="w-full bg-brand-earth border border-aegis-border rounded-xl py-2 pl-10 pr-4 text-sm text-aegis-text outline-none focus:ring-2 focus:ring-brand-amber/20 placeholder:text-aegis-text-muted"
               />
             </div>
             <div className="mt-4 space-y-1 max-h-[500px] overflow-auto pr-2 custom-scrollbar">
@@ -234,18 +234,18 @@ export const Trade: React.FC = () => {
             </div>
           </div>
 
-          <div className="glass-card p-6 border-brand-terracotta/30 bg-brand-forest/40">
+          <div className="glass-card p-6 border-brand-terracotta/30">
             <div className="flex items-center gap-2 mb-4">
               <AlertCircle className="w-5 h-5 text-brand-terracotta" />
               <h4 className="font-bold text-brand-terracotta font-display">Network Status</h4>
             </div>
             <div className="space-y-3">
               <div className="flex justify-between text-xs">
-                <span className="text-orange-100/40">Latency</span>
+                <span className="text-aegis-text-secondary">Latency</span>
                 <span className="text-brand-jungle font-mono font-bold">24ms</span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-orange-100/40">Shield Status</span>
+                <span className="text-aegis-text-secondary">Shield Status</span>
                 <span className="text-brand-terracotta font-bold">ACTIVE</span>
               </div>
             </div>
@@ -254,19 +254,19 @@ export const Trade: React.FC = () => {
 
         {/* Center Column: Chart & Gauge */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="glass-card p-6 flex flex-col min-h-[600px] bg-brand-forest/40 border-orange-900/20">
+          <div className="glass-card p-6 flex flex-col min-h-[600px]">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-6">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="text-2xl font-bold font-display">{activeSymbols.find(s => s.symbol === selectedSymbol)?.display_name || selectedSymbol}</h3>
+                    <h3 className="text-2xl font-bold font-display text-aegis-text">{activeSymbols.find(s => s.symbol === selectedSymbol)?.display_name || selectedSymbol}</h3>
                     <div className="flex items-center gap-1 px-2 py-0.5 bg-brand-jungle/10 text-brand-jungle text-[10px] font-bold rounded uppercase border border-brand-jungle/20">
                       <div className="w-1.5 h-1.5 rounded-full bg-brand-jungle animate-pulse" />
                       Live Feed
                     </div>
                   </div>
                   <div className="flex items-center gap-3 mt-1">
-                    <span className="text-4xl font-mono font-bold tracking-tighter text-white">
+                    <span className="text-4xl font-mono font-bold tracking-tighter text-aegis-text">
                       {currentPrice.toFixed(2)}
                     </span>
                     <span className={cn(
@@ -277,31 +277,39 @@ export const Trade: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                <div className="hidden xl:block h-12 w-px bg-orange-900/20" />
+                <div className="hidden xl:block h-12 w-px bg-aegis-border" />
                 <div className="hidden xl:block">
                   <ShieldGauge riskLevel={Math.round(riskLevel)} />
                 </div>
               </div>
 
-              <div className="flex bg-brand-earth p-1 rounded-xl border border-orange-900/20">
-                <button 
-                  onClick={() => setChartType('line')}
-                  className={cn(
-                    "p-2 rounded-lg transition-all",
-                    chartType === 'line' ? "bg-brand-forest text-brand-amber shadow-inner" : "text-orange-100/40 hover:text-white"
-                  )}
-                >
-                  <Activity className="w-5 h-5" />
-                </button>
-                <button 
-                  onClick={() => setChartType('candles')}
-                  className={cn(
-                    "p-2 rounded-lg transition-all",
-                    chartType === 'candles' ? "bg-brand-forest text-brand-amber shadow-inner" : "text-orange-100/40 hover:text-white"
-                  )}
-                >
-                  <BarChart2 className="w-5 h-5" />
-                </button>
+              <div className="flex items-center gap-4">
+                {/* Balance Display */}
+                <div className="hidden sm:flex flex-col items-end mr-4">
+                  <span className="text-[10px] font-bold text-aegis-text-muted uppercase tracking-widest">Available Balance</span>
+                  <span className="text-lg font-mono font-bold text-brand-amber">{formatCurrency(balance, currency)}</span>
+                </div>
+
+                <div className="flex bg-brand-earth p-1 rounded-xl border border-aegis-border">
+                  <button 
+                    onClick={() => setChartType('line')}
+                    className={cn(
+                      "p-2 rounded-lg transition-all",
+                      chartType === 'line' ? "bg-brand-forest text-brand-amber shadow-inner" : "text-aegis-text-muted hover:text-aegis-text"
+                    )}
+                  >
+                    <Activity className="w-5 h-5" />
+                  </button>
+                  <button 
+                    onClick={() => setChartType('candles')}
+                    className={cn(
+                      "p-2 rounded-lg transition-all",
+                      chartType === 'candles' ? "bg-brand-forest text-brand-amber shadow-inner" : "text-aegis-text-muted hover:text-aegis-text"
+                    )}
+                  >
+                    <BarChart2 className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
             </div>
 

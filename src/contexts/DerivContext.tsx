@@ -12,6 +12,8 @@ interface DerivContextType {
   guestTrades: any[];
   isLoading: boolean;
   error: string | null;
+  theme: 'dark' | 'light';
+  toggleTheme: () => void;
   authorize: (token: string) => Promise<void>;
   setGuestMode: () => void;
   updateGuestBalance: (amount: number, trade?: any) => void;
@@ -31,6 +33,24 @@ export const DerivProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [guestTrades, setGuestTrades] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('aegis_theme') as 'dark' | 'light' | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+      document.body.className = savedTheme;
+    } else {
+      document.body.className = 'dark';
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    localStorage.setItem('aegis_theme', newTheme);
+    document.body.className = newTheme;
+  };
 
   useEffect(() => {
     const init = async () => {
@@ -141,6 +161,8 @@ export const DerivProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       guestTrades,
       isLoading,
       error,
+      theme,
+      toggleTheme,
       authorize,
       setGuestMode,
       updateGuestBalance,

@@ -12,16 +12,45 @@
   --color-brand-forest: #262626; /* Brighter Dark */
   --color-brand-earth: #171717; /* Brighter Black */
   --color-brand-jungle: #10B981; /* Emerald */
+
+  --color-aegis-bg: var(--aegis-bg);
+  --color-aegis-card: var(--aegis-card);
+  --color-aegis-border: var(--aegis-border);
+  --color-aegis-text: var(--aegis-text);
+  --color-aegis-text-secondary: var(--aegis-text-secondary);
+  --color-aegis-text-muted: var(--aegis-text-muted);
+}
+
+:root {
+  --aegis-bg: #171717;
+  --aegis-card: rgba(38, 38, 38, 0.4);
+  --aegis-border: rgba(124, 45, 18, 0.2);
+  --aegis-text: rgba(255, 247, 237, 0.9);
+  --aegis-text-secondary: rgba(255, 247, 237, 0.6);
+  --aegis-text-muted: rgba(255, 247, 237, 0.3);
+}
+
+body.light {
+  --aegis-bg: #F9FAFB;
+  --aegis-card: #FFFFFF;
+  --aegis-border: #E5E7EB;
+  --aegis-text: #111827;
+  --aegis-text-secondary: #4B5563;
+  --aegis-text-muted: #9CA3AF;
 }
 
 @layer base {
   body {
-    @apply bg-brand-earth text-orange-50/80 font-sans antialiased;
+    @apply bg-aegis-bg text-aegis-text font-sans antialiased transition-colors duration-300;
     background-image: radial-gradient(circle at 50% 0%, #262626 0%, #171717 100%);
+  }
+
+  body.light {
+    background-image: none;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display font-bold text-orange-50 tracking-tight;
+    @apply font-display font-bold text-aegis-text tracking-tight transition-colors duration-300;
   }
 }
 
@@ -32,13 +61,27 @@
   background-size: 40px 40px;
 }
 
+body.light .aegis-grid {
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+}
+
 .african-pattern {
   background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30 30 0zm0 10L10 30l20 20 20-20-20-20z' fill='%23B84B26' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
   opacity: 0.4;
 }
 
+body.light .african-pattern {
+  opacity: 0.1;
+}
+
 .glass-card {
-  @apply bg-brand-forest/40 backdrop-blur-xl border border-orange-900/20 shadow-2xl rounded-2xl transition-all duration-300;
+  @apply bg-aegis-card backdrop-blur-xl border border-aegis-border shadow-2xl rounded-2xl transition-all duration-300;
+}
+
+body.light .glass-card {
+  @apply backdrop-blur-none shadow-md;
 }
 
 .neon-glow-red {

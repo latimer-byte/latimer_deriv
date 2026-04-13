@@ -65,19 +65,19 @@ export const Funds: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-20 aegis-grid min-h-screen">
       <div className="text-center space-y-2">
-        <h2 className="text-4xl font-bold text-white tracking-tight font-display">Capital Management</h2>
-        <p className="text-orange-100/40 uppercase tracking-widest text-[10px] font-bold">Neural Liquidity Deposit & Withdrawal</p>
+        <h2 className="text-4xl font-bold text-aegis-text tracking-tight font-display">Capital Management</h2>
+        <p className="text-aegis-text-muted uppercase tracking-widest text-[10px] font-bold">Neural Liquidity Deposit & Withdrawal</p>
       </div>
 
       <div className="flex justify-center">
-        <div className="bg-brand-earth p-1 rounded-2xl border border-orange-900/20 flex shadow-inner">
+        <div className="bg-brand-earth p-1 rounded-2xl border border-aegis-border flex shadow-inner">
           <button 
             onClick={() => setActiveTab('deposit')}
             className={cn(
               "px-8 py-3 rounded-xl font-bold transition-all flex items-center gap-2 uppercase tracking-widest text-xs",
               activeTab === 'deposit' 
                 ? "bg-brand-amber text-white shadow-lg shadow-brand-amber/20 neon-glow-red" 
-                : "text-orange-100/40 hover:bg-brand-forest"
+                : "text-aegis-text-muted hover:bg-brand-forest"
             )}
           >
             <ArrowUpCircle className="w-5 h-5" />
@@ -89,7 +89,7 @@ export const Funds: React.FC = () => {
               "px-8 py-3 rounded-xl font-bold transition-all flex items-center gap-2 uppercase tracking-widest text-xs",
               activeTab === 'withdraw' 
                 ? "bg-brand-amber text-white shadow-lg shadow-brand-amber/20 neon-glow-red" 
-                : "text-orange-100/40 hover:bg-brand-forest"
+                : "text-aegis-text-muted hover:bg-brand-forest"
             )}
           >
             <ArrowDownCircle className="w-5 h-5" />
@@ -104,18 +104,18 @@ export const Funds: React.FC = () => {
             key={method.id}
             whileHover={{ scale: 1.02, y: -2 }}
             onClick={() => setSelectedMethod(method)}
-            className="glass-card p-6 flex items-center justify-between group cursor-pointer bg-brand-forest/40 border-orange-900/20 hover:border-brand-amber/30 transition-all"
+            className="glass-card p-6 flex items-center justify-between group cursor-pointer hover:border-brand-amber/30 transition-all"
           >
             <div className="flex items-center gap-4">
               <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg", method.color)}>
                 <method.icon className="w-8 h-8" />
               </div>
               <div>
-                <h4 className="text-lg font-bold text-white tracking-tight font-display">{method.name}</h4>
-                <p className="text-[10px] text-orange-100/40 font-bold uppercase tracking-widest">{method.description}</p>
+                <h4 className="text-lg font-bold text-aegis-text tracking-tight font-display">{method.name}</h4>
+                <p className="text-[10px] text-aegis-text-muted font-bold uppercase tracking-widest">{method.description}</p>
               </div>
             </div>
-            <div className="w-10 h-10 rounded-full bg-brand-earth flex items-center justify-center text-orange-100/20 group-hover:bg-brand-amber group-hover:text-white transition-all border border-orange-900/20">
+            <div className="w-10 h-10 rounded-full bg-brand-earth flex items-center justify-center text-aegis-text-muted group-hover:bg-brand-amber group-hover:text-white transition-all border border-aegis-border">
               <ChevronRight className="w-5 h-5" />
             </div>
           </motion.div>
@@ -136,7 +136,7 @@ export const Funds: React.FC = () => {
               
               <button 
                 onClick={() => setSelectedMethod(null)}
-                className="absolute top-4 right-4 p-2 hover:bg-brand-earth rounded-full text-orange-100/40 hover:text-white transition-all"
+                className="absolute top-4 right-4 p-2 hover:bg-brand-earth rounded-full text-aegis-text-muted hover:text-aegis-text transition-all"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -147,19 +147,19 @@ export const Funds: React.FC = () => {
                 </div>
                 
                 <div>
-                  <h3 className="text-2xl font-bold text-white tracking-tight capitalize font-display">{activeTab} Protocol: {selectedMethod.name}</h3>
-                  <p className="text-orange-100/40 text-[10px] font-bold uppercase tracking-widest mt-1">Neural Authorization Required</p>
+                  <h3 className="text-2xl font-bold text-aegis-text tracking-tight capitalize font-display">{activeTab} Protocol: {selectedMethod.name}</h3>
+                  <p className="text-aegis-text-muted text-[10px] font-bold uppercase tracking-widest mt-1">Neural Authorization Required</p>
                 </div>
 
                 <div className="space-y-4">
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-orange-100/20 font-mono">$</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-aegis-text-muted font-mono">$</span>
                     <input 
                       type="number" 
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
                       placeholder="0.00"
-                      className="w-full bg-brand-earth border border-orange-900/20 rounded-2xl py-4 pl-10 pr-4 text-xl font-bold outline-none focus:ring-2 focus:ring-brand-amber/20 text-white font-mono placeholder:text-orange-100/10"
+                      className="w-full bg-brand-earth border border-aegis-border rounded-2xl py-4 pl-10 pr-4 text-xl font-bold outline-none focus:ring-2 focus:ring-brand-amber/20 text-aegis-text font-mono placeholder:text-aegis-text-muted"
                     />
                   </div>
 
