@@ -37,7 +37,7 @@ export const Layout: React.FC = () => {
       <div className="absolute inset-0 african-pattern pointer-events-none" />
 
       {/* Sidebar - Desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-brand-forest/95 backdrop-blur-xl border-r border-orange-900/10 z-10">
+      <aside className="hidden md:flex flex-col w-64 bg-brand-forest/95 backdrop-blur-xl border-r border-aegis-border z-10">
         <div className="p-8 flex items-center gap-3">
           <div className="w-10 h-10 bg-brand-amber rounded-xl flex items-center justify-center shadow-lg shadow-brand-amber/20">
             <TrendingUp className="text-white w-6 h-6" />

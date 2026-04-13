@@ -221,7 +221,7 @@ export const Trade: React.FC = () => {
                     "w-full flex items-center justify-between p-3 rounded-xl transition-all",
                     selectedSymbol === symbol.symbol 
                       ? "bg-brand-amber/10 text-brand-amber border border-brand-amber/30" 
-                      : "hover:bg-brand-forest text-orange-100/40"
+                      : "hover:bg-brand-forest text-aegis-text-muted"
                   )}
                 >
                   <div className="text-left">
@@ -317,23 +317,25 @@ export const Trade: React.FC = () => {
               {chartType === 'line' ? (
                 <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={400}>
                   <LineChart data={ticks}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#451a03" strokeOpacity={0.2} />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" strokeOpacity={0.1} className="text-aegis-border" />
                     <XAxis 
                       dataKey="time" 
                       axisLine={false} 
                       tickLine={false} 
-                      tick={{ fontSize: 10, fill: '#fef3c7', fillOpacity: 0.4 }} 
+                      tick={{ fontSize: 10, fill: 'currentColor', fillOpacity: 0.4 }} 
+                      className="text-aegis-text"
                     />
                     <YAxis 
                       domain={['auto', 'auto']} 
                       orientation="right"
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fontSize: 10, fill: '#fef3c7', fillOpacity: 0.4 }}
+                      tick={{ fontSize: 10, fill: 'currentColor', fillOpacity: 0.4 }}
+                      className="text-aegis-text"
                     />
                     <Tooltip 
-                      contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #451a03', borderRadius: '12px' }}
-                      itemStyle={{ color: '#fff' }}
+                      contentStyle={{ backgroundColor: 'var(--aegis-bg)', border: '1px solid var(--aegis-border)', borderRadius: '12px' }}
+                      itemStyle={{ color: 'var(--aegis-text)' }}
                     />
                     <Line 
                       type="monotone" 
@@ -346,7 +348,7 @@ export const Trade: React.FC = () => {
                   </LineChart>
                 </ResponsiveContainer>
               ) : (
-                <CandlestickChart data={candles} colors={{ backgroundColor: 'transparent', textColor: '#fef3c7' }} />
+                <CandlestickChart data={candles} colors={{ backgroundColor: 'transparent', textColor: 'var(--aegis-text-muted)' }} />
               )}
             </div>
           </div>

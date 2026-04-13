@@ -23,16 +23,16 @@ export const TradePanel: React.FC<TradePanelProps> = ({ symbol, onTrade, isTradi
   }, []);
 
   return (
-    <div className="glass-card p-6 space-y-6 bg-brand-forest/40 border-orange-900/20">
+    <div className="glass-card p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <h4 className="text-lg font-bold flex items-center gap-2 font-display">
+          <h4 className="text-lg font-bold flex items-center gap-2 font-display text-aegis-text">
             <Zap className="w-5 h-5 text-brand-amber" />
             Trade
           </h4>
-          <span className="text-[10px] font-mono text-orange-100/20">{currentTime}</span>
+          <span className="text-[10px] font-mono text-aegis-text-muted">{currentTime}</span>
         </div>
-        <div className="flex items-center gap-1 text-[10px] font-bold text-orange-100/40 uppercase tracking-widest">
+        <div className="flex items-center gap-1 text-[10px] font-bold text-aegis-text-muted uppercase tracking-widest">
           <Info className="w-3 h-3" />
           Instant Execution
         </div>
@@ -40,16 +40,16 @@ export const TradePanel: React.FC<TradePanelProps> = ({ symbol, onTrade, isTradi
 
       <div className="space-y-4">
         <div>
-          <label className="text-[10px] font-bold text-orange-100/40 uppercase tracking-widest mb-2 block">
+          <label className="text-[10px] font-bold text-aegis-text-muted uppercase tracking-widest mb-2 block">
             Stake Amount
           </label>
           <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-100/20 font-mono">$</span>
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-aegis-text-muted font-mono">$</span>
             <input 
               type="number" 
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
-              className="w-full bg-brand-earth border border-orange-900/20 rounded-xl py-4 pl-8 pr-4 text-xl font-mono focus:ring-2 focus:ring-brand-amber/20 outline-none transition-all text-white"
+              className="w-full bg-brand-earth border border-aegis-border rounded-xl py-4 pl-8 pr-4 text-xl font-mono focus:ring-2 focus:ring-brand-amber/20 outline-none transition-all text-aegis-text"
             />
           </div>
         </div>
@@ -60,19 +60,19 @@ export const TradePanel: React.FC<TradePanelProps> = ({ symbol, onTrade, isTradi
             "p-4 rounded-xl border cursor-pointer transition-all flex items-center justify-between",
             useAegisShield 
               ? "bg-brand-terracotta/10 border-brand-terracotta/30" 
-              : "bg-brand-earth border-orange-900/20 grayscale opacity-50"
+              : "bg-brand-earth border-aegis-border grayscale opacity-50"
           )}
         >
           <div className="flex items-center gap-3">
             <div className={cn(
               "w-10 h-10 rounded-lg flex items-center justify-center",
-              useAegisShield ? "bg-brand-terracotta text-white" : "bg-brand-forest text-orange-100/40"
+              useAegisShield ? "bg-brand-terracotta text-white" : "bg-brand-forest text-aegis-text-muted"
             )}>
               <Shield className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-sm font-bold tracking-tight">Aegis Shield</p>
-              <p className="text-[10px] text-orange-100/40 font-bold uppercase tracking-widest">Auto-hedge 50% stake</p>
+              <p className="text-sm font-bold tracking-tight text-aegis-text">Aegis Shield</p>
+              <p className="text-[10px] text-aegis-text-muted font-bold uppercase tracking-widest">Auto-hedge 50% stake</p>
             </div>
           </div>
           <div className={cn(
@@ -115,13 +115,13 @@ export const TradePanel: React.FC<TradePanelProps> = ({ symbol, onTrade, isTradi
         </button>
       </div>
 
-      <div className="pt-4 border-t border-orange-900/20">
+      <div className="pt-4 border-t border-aegis-border">
         <div className="flex justify-between text-xs mb-2">
-          <span className="text-orange-100/40 font-bold uppercase tracking-widest">Potential Return</span>
+          <span className="text-aegis-text-muted font-bold uppercase tracking-widest">Potential Return</span>
           <span className="text-brand-jungle font-bold">+{formatCurrency(amount * 0.95, currency)}</span>
         </div>
         <div className="flex justify-between text-xs">
-          <span className="text-orange-100/40 font-bold uppercase tracking-widest">Max Risk</span>
+          <span className="text-aegis-text-muted font-bold uppercase tracking-widest">Max Risk</span>
           <span className="text-brand-amber font-bold">
             {useAegisShield ? formatCurrency(amount * 0.5, currency) : formatCurrency(amount, currency)}
           </span>

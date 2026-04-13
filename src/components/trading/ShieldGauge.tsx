@@ -33,8 +33,8 @@ export const ShieldGauge: React.FC<ShieldGaugeProps> = ({ riskLevel }) => {
         />
       </svg>
       <div className="absolute flex flex-col items-center">
-        <span className="text-[10px] uppercase tracking-widest text-orange-100/40 font-bold font-display">Shield Integrity</span>
-        <span className="text-4xl font-mono font-bold text-white">{riskLevel}%</span>
+        <span className="text-[10px] uppercase tracking-widest text-aegis-text-muted font-bold font-display">Shield Integrity</span>
+        <span className="text-4xl font-mono font-bold text-aegis-text">{riskLevel}%</span>
       </div>
     </div>
   );

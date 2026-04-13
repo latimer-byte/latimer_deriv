@@ -15,9 +15,9 @@ interface CandlestickChartProps {
 export const CandlestickChart: React.FC<CandlestickChartProps> = ({
   data,
   colors: {
-    backgroundColor = 'white',
+    backgroundColor = 'transparent',
     lineColor = '#EF4444',
-    textColor = '#1F2937',
+    textColor = 'var(--aegis-text-muted)',
   } = {},
 }) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
@@ -34,22 +34,22 @@ export const CandlestickChart: React.FC<CandlestickChartProps> = ({
     const chart = createChart(chartContainerRef.current, {
       layout: {
         background: { type: ColorType.Solid, color: 'transparent' },
-        textColor: '#64748b',
+        textColor: textColor,
         fontFamily: 'JetBrains Mono, monospace',
       },
       width: chartContainerRef.current.clientWidth,
       height: 400,
       grid: {
-        vertLines: { color: '#1e293b' },
-        horzLines: { color: '#1e293b' },
+        vertLines: { color: 'rgba(184, 75, 38, 0.1)' },
+        horzLines: { color: 'rgba(184, 75, 38, 0.1)' },
       },
       timeScale: {
-        borderColor: '#1e293b',
+        borderColor: 'rgba(184, 75, 38, 0.2)',
         timeVisible: true,
         secondsVisible: false,
       },
       rightPriceScale: {
-        borderColor: '#1e293b',
+        borderColor: 'rgba(184, 75, 38, 0.2)',
       },
     }) as any;
 

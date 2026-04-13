@@ -78,8 +78,8 @@ export const Markets: React.FC = () => {
     <div className="space-y-8 pb-20 aegis-grid min-h-screen">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h2 className="text-4xl font-bold text-white tracking-tight font-display">Market Nodes</h2>
-          <p className="text-orange-100/40 mt-1 uppercase tracking-[0.2em] text-[10px] font-bold">Global Asset Neural Network</p>
+          <h2 className="text-4xl font-bold text-aegis-text tracking-tight font-display">Market Nodes</h2>
+          <p className="text-aegis-text-muted mt-1 uppercase tracking-[0.2em] text-[10px] font-bold">Global Asset Neural Network</p>
         </div>
       </div>
 
@@ -93,7 +93,7 @@ export const Markets: React.FC = () => {
               "flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all whitespace-nowrap border",
               activeCategory === cat.id 
                 ? "bg-brand-amber text-white shadow-lg shadow-brand-amber/20 border-brand-amber neon-glow-red" 
-                : "bg-brand-forest/40 text-orange-100/40 border-orange-900/20 hover:bg-brand-forest hover:text-white"
+                : "bg-brand-forest/40 text-aegis-text-muted border-aegis-border hover:bg-brand-forest hover:text-aegis-text"
             )}
           >
             <cat.icon className="w-5 h-5" />
@@ -150,7 +150,7 @@ export const Markets: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-6 pt-6 border-t border-orange-900/20 flex gap-2">
+              <div className="mt-6 pt-6 border-t border-aegis-border flex gap-2">
                 <button 
                   onClick={(e) => {
                     e.stopPropagation();
@@ -165,7 +165,7 @@ export const Markets: React.FC = () => {
                     e.stopPropagation();
                     navigate(`/trade/${symbol.symbol}`);
                   }}
-                  className="px-3 py-2 bg-brand-earth text-orange-100/40 rounded-lg hover:bg-brand-forest transition-all border border-orange-900/20"
+                  className="px-3 py-2 bg-brand-earth text-aegis-text-muted rounded-lg hover:bg-brand-forest transition-all border border-aegis-border"
                 >
                   <BarChart3 className="w-4 h-4" />
                 </button>
@@ -175,10 +175,10 @@ export const Markets: React.FC = () => {
         </div>
         
         {filteredSymbols.length === 0 && (
-          <div className="text-center py-20 glass-card bg-brand-forest/40 border-orange-900/20">
-            <Globe className="w-16 h-16 text-orange-100/10 mx-auto mb-4" />
-            <h3 className="text-xl text-white font-bold tracking-tight font-display">No Market Nodes Found</h3>
-            <p className="text-orange-100/40 mt-1 uppercase tracking-widest text-[10px] font-bold">Adjust neural filters or search parameters</p>
+          <div className="text-center py-20 glass-card bg-brand-forest/40 border-aegis-border">
+            <Globe className="w-16 h-16 text-aegis-text-muted/10 mx-auto mb-4" />
+            <h3 className="text-xl text-aegis-text font-bold tracking-tight font-display">No Market Nodes Found</h3>
+            <p className="text-aegis-text-muted mt-1 uppercase tracking-widest text-[10px] font-bold">Adjust neural filters or search parameters</p>
             <button 
               onClick={() => window.location.reload()}
               className="mt-6 px-6 py-2 bg-brand-amber text-white rounded-xl font-bold hover:bg-brand-amber/90 transition-all shadow-lg shadow-brand-amber/20 neon-glow-red"

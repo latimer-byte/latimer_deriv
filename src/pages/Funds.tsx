@@ -184,13 +184,13 @@ export const Funds: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <div className="glass-card p-8 bg-gradient-to-br from-brand-amber/20 to-brand-terracotta/20 text-white overflow-hidden relative border-brand-amber/30">
+      <div className="glass-card p-8 bg-gradient-to-br from-brand-amber/20 to-brand-terracotta/20 text-aegis-text overflow-hidden relative border-brand-amber/30">
         <div className="absolute top-0 right-0 w-64 h-64 bg-brand-amber/5 rounded-full -mr-32 -mt-32 blur-3xl" />
         
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-2">
             <h3 className="text-2xl font-bold tracking-tight font-display">Neural Support Node</h3>
-            <p className="text-orange-100/60 text-sm max-w-md">Our global response team is active 24/7 to facilitate neural link stability across all African nodes.</p>
+            <p className="text-aegis-text-secondary text-sm max-w-md">Our global response team is active 24/7 to facilitate neural link stability across all African nodes.</p>
           </div>
           <button 
             onClick={() => navigate('/profile')}
