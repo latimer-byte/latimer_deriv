@@ -49,7 +49,7 @@ export const TradePanel: React.FC<TradePanelProps> = ({ symbol, onTrade, isTradi
               type="number" 
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
-              className="w-full bg-brand-earth border border-aegis-border rounded-xl py-4 pl-8 pr-4 text-xl font-mono focus:ring-2 focus:ring-brand-amber/20 outline-none transition-all text-aegis-text"
+              className="w-full bg-aegis-bg border border-aegis-border rounded-xl py-4 pl-8 pr-4 text-xl font-mono focus:ring-2 focus:ring-brand-amber/20 outline-none transition-all text-aegis-text"
             />
           </div>
         </div>
@@ -60,13 +60,13 @@ export const TradePanel: React.FC<TradePanelProps> = ({ symbol, onTrade, isTradi
             "p-4 rounded-xl border cursor-pointer transition-all flex items-center justify-between",
             useAegisShield 
               ? "bg-brand-terracotta/10 border-brand-terracotta/30" 
-              : "bg-brand-earth border-aegis-border grayscale opacity-50"
+              : "bg-aegis-bg border-aegis-border grayscale opacity-50"
           )}
         >
           <div className="flex items-center gap-3">
             <div className={cn(
               "w-10 h-10 rounded-lg flex items-center justify-center",
-              useAegisShield ? "bg-brand-terracotta text-white" : "bg-brand-forest text-aegis-text-muted"
+              useAegisShield ? "bg-brand-terracotta text-white" : "bg-aegis-card text-aegis-text-muted"
             )}>
               <Shield className="w-6 h-6" />
             </div>
@@ -77,7 +77,7 @@ export const TradePanel: React.FC<TradePanelProps> = ({ symbol, onTrade, isTradi
           </div>
           <div className={cn(
             "w-10 h-5 rounded-full relative transition-all",
-            useAegisShield ? "bg-brand-terracotta" : "bg-brand-earth"
+            useAegisShield ? "bg-brand-terracotta" : "bg-aegis-bg"
           )}>
             <div className={cn(
               "absolute top-1 w-3 h-3 bg-white rounded-full transition-all",

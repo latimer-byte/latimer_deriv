@@ -93,7 +93,7 @@ export const Markets: React.FC = () => {
               "flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all whitespace-nowrap border",
               activeCategory === cat.id 
                 ? "bg-brand-amber text-white shadow-lg shadow-brand-amber/20 border-brand-amber neon-glow-red" 
-                : "bg-brand-forest/40 text-aegis-text-muted border-aegis-border hover:bg-brand-forest hover:text-aegis-text"
+                : "bg-aegis-card/40 text-aegis-text-muted border-aegis-border hover:bg-aegis-card hover:text-aegis-text"
             )}
           >
             <cat.icon className="w-5 h-5" />
@@ -111,7 +111,7 @@ export const Markets: React.FC = () => {
             placeholder="Search asset nodes (e.g. BTC, Gold, Volatility)..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-brand-forest/40 border border-aegis-border rounded-2xl py-4 pl-12 pr-6 text-lg outline-none focus:ring-2 focus:ring-brand-amber/20 shadow-sm text-aegis-text placeholder:text-aegis-text-muted"
+            className="w-full bg-aegis-card/40 border border-aegis-border rounded-2xl py-4 pl-12 pr-6 text-lg outline-none focus:ring-2 focus:ring-brand-amber/20 shadow-sm text-aegis-text placeholder:text-aegis-text-muted"
           />
         </div>
 
@@ -126,7 +126,7 @@ export const Markets: React.FC = () => {
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-brand-earth flex items-center justify-center border border-aegis-border group-hover:bg-brand-amber/10 transition-all">
+                  <div className="w-10 h-10 rounded-xl bg-aegis-bg flex items-center justify-center border border-aegis-border group-hover:bg-brand-amber/10 transition-all">
                     <TrendingUp className="text-brand-terracotta w-5 h-5 group-hover:text-brand-amber" />
                   </div>
                   <div>
@@ -165,7 +165,7 @@ export const Markets: React.FC = () => {
                     e.stopPropagation();
                     navigate(`/trade/${symbol.symbol}`);
                   }}
-                  className="px-3 py-2 bg-brand-earth text-aegis-text-muted rounded-lg hover:bg-brand-forest transition-all border border-aegis-border"
+                  className="px-3 py-2 bg-aegis-bg text-aegis-text-muted rounded-lg hover:bg-aegis-card transition-all border border-aegis-border"
                 >
                   <BarChart3 className="w-4 h-4" />
                 </button>
@@ -175,7 +175,7 @@ export const Markets: React.FC = () => {
         </div>
         
         {filteredSymbols.length === 0 && (
-          <div className="text-center py-20 glass-card bg-brand-forest/40 border-aegis-border">
+          <div className="text-center py-20 glass-card bg-aegis-card/40 border-aegis-border">
             <Globe className="w-16 h-16 text-aegis-text-muted/10 mx-auto mb-4" />
             <h3 className="text-xl text-aegis-text font-bold tracking-tight font-display">No Market Nodes Found</h3>
             <p className="text-aegis-text-muted mt-1 uppercase tracking-widest text-[10px] font-bold">Adjust neural filters or search parameters</p>

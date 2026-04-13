@@ -42,7 +42,7 @@ const StatCard = ({ title, value, change, icon: Icon, trend }: any) => (
     className="glass-card p-6 flex flex-col gap-4 border-l-4 border-l-brand-amber"
   >
     <div className="flex items-center justify-between">
-      <div className="w-12 h-12 rounded-2xl bg-brand-earth flex items-center justify-center border border-aegis-border">
+      <div className="w-12 h-12 rounded-2xl bg-aegis-bg flex items-center justify-center border border-aegis-border">
         <Icon className="w-6 h-6 text-brand-amber" />
       </div>
       <div className={cn(
@@ -120,7 +120,7 @@ export const Dashboard: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         onClick={() => navigate('/roadmap')}
-        className="glass-card p-8 bg-brand-forest/20 text-aegis-text flex flex-col md:flex-row items-center justify-between gap-6 cursor-pointer hover:bg-brand-forest/30 transition-all border-aegis-border"
+        className="glass-card p-8 bg-aegis-card/20 text-aegis-text flex flex-col md:flex-row items-center justify-between gap-6 cursor-pointer hover:bg-aegis-card/30 transition-all border-aegis-border"
       >
         <div className="flex items-center gap-6">
           <div className="w-14 h-14 rounded-2xl bg-brand-terracotta/20 border border-brand-terracotta/30 flex items-center justify-center">
@@ -195,14 +195,14 @@ export const Dashboard: React.FC = () => {
           className="glass-card p-6 flex flex-col gap-4 border-l-4 border-l-brand-amber"
         >
           <div className="flex items-center justify-between">
-            <div className="w-12 h-12 rounded-2xl bg-brand-earth flex items-center justify-center border border-aegis-border">
+            <div className="w-12 h-12 rounded-2xl bg-aegis-bg flex items-center justify-center border border-aegis-border">
               <Activity className="w-6 h-6 text-brand-amber" />
             </div>
             <span className="text-[10px] font-bold text-brand-jungle uppercase tracking-widest">Bullish</span>
           </div>
           <div>
             <p className="text-[10px] text-aegis-text-muted font-bold uppercase tracking-widest">Market Sentiment</p>
-            <div className="mt-2 h-2 w-full bg-brand-earth rounded-full overflow-hidden flex border border-aegis-border">
+            <div className="mt-2 h-2 w-full bg-aegis-bg rounded-full overflow-hidden flex border border-aegis-border">
               <div className="h-full bg-brand-jungle shadow-[0_0_10px_rgba(45,90,39,0.5)]" style={{ width: '72%' }} />
               <div className="h-full bg-brand-terracotta shadow-[0_0_10px_rgba(184,75,38,0.5)]" style={{ width: '28%' }} />
             </div>
@@ -222,11 +222,11 @@ export const Dashboard: React.FC = () => {
               <h3 className="text-xl font-bold text-aegis-text tracking-tight font-display">Performance Analytics</h3>
               <p className="text-[10px] text-aegis-text-muted uppercase tracking-widest font-bold">Historical Yield Matrix</p>
             </div>
-            <div className="flex bg-brand-earth p-1 rounded-xl border border-aegis-border">
+            <div className="flex bg-aegis-bg p-1 rounded-xl border border-aegis-border">
               {['1D', '1W', '1M', '1Y', 'ALL'].map(t => (
                 <button key={t} className={cn(
                   "px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all",
-                  t === '1W' ? "bg-brand-forest text-brand-amber shadow-inner" : "text-aegis-text-muted hover:text-aegis-text"
+                  t === '1W' ? "bg-aegis-card text-brand-amber shadow-inner" : "text-aegis-text-muted hover:text-aegis-text"
                 )}>
                   {t}
                 </button>
@@ -260,7 +260,7 @@ export const Dashboard: React.FC = () => {
                   content={({ active, payload }: any) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="bg-brand-earth p-4 rounded-2xl shadow-2xl border border-aegis-border">
+                        <div className="bg-aegis-bg p-4 rounded-2xl shadow-2xl border border-aegis-border">
                           <p className="text-[10px] font-bold text-aegis-text-muted uppercase mb-1 tracking-widest">{payload[0].payload.time}</p>
                           <p className="text-xl font-bold text-aegis-text font-mono">{formatCurrency(payload[0].value, currency)}</p>
                           <p className={cn(
@@ -318,7 +318,7 @@ export const Dashboard: React.FC = () => {
               <div 
                 key={i} 
                 onClick={() => navigate('/history')}
-                className="flex items-center justify-between p-3 rounded-xl hover:bg-brand-forest transition-all group cursor-pointer border border-transparent hover:border-aegis-border"
+                className="flex items-center justify-between p-3 rounded-xl hover:bg-aegis-card transition-all group cursor-pointer border border-transparent hover:border-aegis-border"
               >
                 <div className="flex items-center gap-3">
                   <div className={cn(

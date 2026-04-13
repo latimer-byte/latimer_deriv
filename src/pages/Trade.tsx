@@ -19,6 +19,7 @@ import { CandlestickChart } from '@/components/CandlestickChart';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ShieldGauge } from '@/components/trading/ShieldGauge';
 import { TradePanel } from '@/components/trading/TradePanel';
+import { motion, AnimatePresence } from 'motion/react';
 
 export const Trade: React.FC = () => {
   const { symbol: urlSymbol } = useParams();
@@ -31,6 +32,20 @@ export const Trade: React.FC = () => {
   const [isTrading, setIsTrading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [riskLevel, setRiskLevel] = useState(45);
+  const [tradeMessage, setTradeMessage] = useState<{ type: 'success' | 'error' | 'info', text: string } | null>(null);
+
+  useEffect(() => {
+    if (activeSymbols.length > 0 && urlSymbol) {
+      const exactMatch = activeSymbols.find(s => s.symbol === urlSymbol);
+      if (!exactMatch) {
+        const partialMatch = activeSymbols.find(s => s.symbol.includes(urlSymbol) || s.display_name.includes(urlSymbol));
+        if (partialMatch) {
+          setSelectedSymbol(partialMatch.symbol);
+          navigate(`/trade/${partialMatch.symbol}`, { replace: true });
+        }
+      }
+    }
+  }, [activeSymbols, urlSymbol]);
 
   useEffect(() => {
     if (urlSymbol && urlSymbol !== selectedSymbol) {
@@ -58,23 +73,25 @@ export const Trade: React.FC = () => {
     setTicks([]);
     setCandles([]);
     
-    if (chartType === 'line') {
-      const unsubscribe = deriv.subscribe({ ticks: selectedSymbol }, (data) => {
-        if (data.tick) {
-          setTicks(prev => {
-            const newTickValue = data.tick.quote;
-            const newTick = {
-              time: new Date(data.tick.epoch * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-              value: newTickValue,
-            };
-            return [...prev, newTick].slice(-50);
-          });
-          // Randomly fluctuate risk level for gamification
-          setRiskLevel(prev => Math.max(10, Math.min(95, prev + (Math.random() * 4 - 2))));
-        }
-      });
-      return () => unsubscribe();
-    } else {
+    // Always subscribe to ticks to keep currentPrice updated
+    const unsubscribeTicks = deriv.subscribe({ ticks: selectedSymbol }, (data) => {
+      if (data.tick) {
+        setTicks(prev => {
+          const newTickValue = data.tick.quote;
+          const newTick = {
+            time: new Date(data.tick.epoch * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+            value: newTickValue,
+          };
+          return [...prev, newTick].slice(-50);
+        });
+        // Randomly fluctuate risk level for gamification
+        setRiskLevel(prev => Math.max(10, Math.min(95, prev + (Math.random() * 4 - 2))));
+      }
+    });
+
+    let unsubscribeCandles = () => {};
+
+    if (chartType === 'candles') {
       deriv.send({
         ticks_history: selectedSymbol,
         count: 100,
@@ -94,7 +111,7 @@ export const Trade: React.FC = () => {
         }
       }).catch(err => console.error('Candle history error:', err));
 
-      const unsubscribe = deriv.subscribe({ 
+      unsubscribeCandles = deriv.subscribe({ 
         ticks_history: selectedSymbol, 
         style: 'candles', 
         granularity: 60 
@@ -120,22 +137,33 @@ export const Trade: React.FC = () => {
           });
         }
       });
-      return () => unsubscribe();
     }
+
+    return () => {
+      unsubscribeTicks();
+      unsubscribeCandles();
+    };
   }, [selectedSymbol, chartType, loginId]);
 
   const handleAegisTrade = async (type: 'CALL' | 'PUT', amount: number, hedge: boolean) => {
     if (amount > balance) {
-      alert('Insufficient credits for this operation.');
+      setTradeMessage({ type: 'error', text: 'Insufficient credits for this operation.' });
+      setTimeout(() => setTradeMessage(null), 3000);
       return;
     }
 
     setIsTrading(true);
+    setTradeMessage(null);
     try {
       // Simulate Aegis Execution
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       const entryPrice = ticks[ticks.length - 1]?.value || 0;
+      
+      if (entryPrice === 0) {
+        throw new Error('Neural link unstable. Price data missing.');
+      }
+
       const isWin = Math.random() > 0.45; // 55% win rate for demo
       const payout = amount * 1.95;
 
@@ -165,9 +193,14 @@ export const Trade: React.FC = () => {
         }
       }
       
-      alert(isWin ? 'Aegis Strike Successful!' : (hedge ? 'Shield Absorbed Damage!' : 'Shield Failed! Critical Hit.'));
+      setTradeMessage({ 
+        type: isWin ? 'success' : (hedge ? 'info' : 'error'), 
+        text: isWin ? 'Aegis Strike Successful!' : (hedge ? 'Shield Absorbed Damage!' : 'Shield Failed! Critical Hit.')
+      });
+      setTimeout(() => setTradeMessage(null), 4000);
     } catch (err: any) {
-      alert('Aegis Network Error: ' + err.message);
+      setTradeMessage({ type: 'error', text: 'Aegis Network Error: ' + err.message });
+      setTimeout(() => setTradeMessage(null), 4000);
     } finally {
       setIsTrading(false);
     }
@@ -199,6 +232,28 @@ export const Trade: React.FC = () => {
       )}
 
       <div className={cn("grid grid-cols-1 lg:grid-cols-4 gap-8", !loginId && "opacity-20 pointer-events-none grayscale")}>
+        {/* Trade Message Overlay */}
+        <AnimatePresence>
+          {tradeMessage && (
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="fixed top-24 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4"
+            >
+              <div className={cn(
+                "p-4 rounded-2xl border shadow-2xl flex items-center gap-3 backdrop-blur-xl",
+                tradeMessage.type === 'success' ? "bg-brand-jungle/20 border-brand-jungle/50 text-brand-jungle" :
+                tradeMessage.type === 'error' ? "bg-brand-terracotta/20 border-brand-terracotta/50 text-brand-terracotta" :
+                "bg-brand-amber/20 border-brand-amber/50 text-brand-amber"
+              )}>
+                {tradeMessage.type === 'success' ? <Sword className="w-6 h-6" /> : <Shield className="w-6 h-6" />}
+                <p className="font-bold uppercase tracking-widest text-xs">{tradeMessage.text}</p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Left Column: Market Selector */}
         <div className="lg:col-span-1 space-y-6">
           <div className="glass-card p-4">
@@ -209,7 +264,7 @@ export const Trade: React.FC = () => {
                 placeholder="Search Aegis Assets..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-brand-earth border border-aegis-border rounded-xl py-2 pl-10 pr-4 text-sm text-aegis-text outline-none focus:ring-2 focus:ring-brand-amber/20 placeholder:text-aegis-text-muted"
+                className="w-full bg-aegis-bg border border-aegis-border rounded-xl py-2 pl-10 pr-4 text-sm text-aegis-text outline-none focus:ring-2 focus:ring-brand-amber/20 placeholder:text-aegis-text-muted"
               />
             </div>
             <div className="mt-4 space-y-1 max-h-[500px] overflow-auto pr-2 custom-scrollbar">
@@ -221,7 +276,7 @@ export const Trade: React.FC = () => {
                     "w-full flex items-center justify-between p-3 rounded-xl transition-all",
                     selectedSymbol === symbol.symbol 
                       ? "bg-brand-amber/10 text-brand-amber border border-brand-amber/30" 
-                      : "hover:bg-brand-forest text-aegis-text-muted"
+                      : "hover:bg-aegis-card text-aegis-text-muted"
                   )}
                 >
                   <div className="text-left">
@@ -290,12 +345,12 @@ export const Trade: React.FC = () => {
                   <span className="text-lg font-mono font-bold text-brand-amber">{formatCurrency(balance, currency)}</span>
                 </div>
 
-                <div className="flex bg-brand-earth p-1 rounded-xl border border-aegis-border">
+                <div className="flex bg-aegis-bg p-1 rounded-xl border border-aegis-border">
                   <button 
                     onClick={() => setChartType('line')}
                     className={cn(
                       "p-2 rounded-lg transition-all",
-                      chartType === 'line' ? "bg-brand-forest text-brand-amber shadow-inner" : "text-aegis-text-muted hover:text-aegis-text"
+                      chartType === 'line' ? "bg-aegis-card text-brand-amber shadow-inner" : "text-aegis-text-muted hover:text-aegis-text"
                     )}
                   >
                     <Activity className="w-5 h-5" />
@@ -304,7 +359,7 @@ export const Trade: React.FC = () => {
                     onClick={() => setChartType('candles')}
                     className={cn(
                       "p-2 rounded-lg transition-all",
-                      chartType === 'candles' ? "bg-brand-forest text-brand-amber shadow-inner" : "text-aegis-text-muted hover:text-aegis-text"
+                      chartType === 'candles' ? "bg-aegis-card text-brand-amber shadow-inner" : "text-aegis-text-muted hover:text-aegis-text"
                     )}
                   >
                     <BarChart2 className="w-5 h-5" />

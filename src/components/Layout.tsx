@@ -32,12 +32,12 @@ export const Layout: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-brand-earth relative overflow-hidden">
+    <div className="min-h-screen flex flex-col md:flex-row bg-aegis-bg relative overflow-hidden">
       {/* African Pattern Background Overlay */}
       <div className="absolute inset-0 african-pattern pointer-events-none" />
 
       {/* Sidebar - Desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-brand-forest/95 backdrop-blur-xl border-r border-aegis-border z-10">
+      <aside className="hidden md:flex flex-col w-64 bg-aegis-card backdrop-blur-xl border-r border-aegis-border z-10">
         <div className="p-8 flex items-center gap-3">
           <div className="w-10 h-10 bg-brand-amber rounded-xl flex items-center justify-center shadow-lg shadow-brand-amber/20">
             <TrendingUp className="text-white w-6 h-6" />
@@ -75,7 +75,7 @@ export const Layout: React.FC = () => {
             to="/profile"
             className={({ isActive }) => cn(
               "flex items-center gap-3 px-4 py-3 rounded-xl transition-all group",
-              isActive ? "bg-brand-forest text-aegis-text" : "text-aegis-text-muted hover:bg-brand-forest hover:text-aegis-text"
+              isActive ? "bg-aegis-card text-aegis-text" : "text-aegis-text-muted hover:bg-aegis-card hover:text-aegis-text"
             )}
           >
             <User className="w-4 h-4" />
@@ -85,7 +85,7 @@ export const Layout: React.FC = () => {
       </aside>
 
       {/* Mobile Header */}
-      <header className="md:hidden bg-brand-forest/95 backdrop-blur-xl border-b border-aegis-border p-4 flex items-center justify-between z-20">
+      <header className="md:hidden bg-aegis-card backdrop-blur-xl border-b border-aegis-border p-4 flex items-center justify-between z-20">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-brand-amber rounded-lg flex items-center justify-center">
             <TrendingUp className="text-white w-5 h-5" />
@@ -114,7 +114,7 @@ export const Layout: React.FC = () => {
             initial={{ opacity: 0, x: -100 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -100 }}
-            className="fixed inset-0 bg-brand-earth z-30 p-6 flex flex-col md:hidden"
+            className="fixed inset-0 bg-aegis-bg z-30 p-6 flex flex-col md:hidden"
           >
             <div className="flex justify-between items-center mb-8">
               <div className="flex items-center gap-2">
@@ -165,7 +165,7 @@ export const Layout: React.FC = () => {
       {/* Main Content */}
       <main className="flex-1 flex flex-col z-10 overflow-auto">
         {/* Top Bar */}
-        <header className="hidden md:flex items-center justify-between px-8 py-4 bg-brand-forest/30 backdrop-blur-sm border-b border-aegis-border">
+        <header className="hidden md:flex items-center justify-between px-8 py-4 bg-aegis-card/30 backdrop-blur-sm border-b border-aegis-border">
           <div className="flex items-center gap-4">
             <span className="text-[10px] text-aegis-text-muted font-bold uppercase tracking-widest">System Status: <span className="text-brand-jungle">Operational</span></span>
             {isGuest ? (
@@ -185,7 +185,7 @@ export const Layout: React.FC = () => {
           <div className="flex items-center gap-8">
             <button 
               onClick={toggleTheme}
-              className="p-2 rounded-xl bg-brand-forest/50 border border-aegis-border text-aegis-text-muted hover:text-aegis-text transition-all"
+              className="p-2 rounded-xl bg-aegis-card/50 border border-aegis-border text-aegis-text-muted hover:text-aegis-text transition-all"
             >
               {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
@@ -195,7 +195,7 @@ export const Layout: React.FC = () => {
                 {new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(balance)}
               </p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-brand-forest/50 flex items-center justify-center border border-aegis-border">
+            <div className="w-10 h-10 rounded-xl bg-aegis-card/50 flex items-center justify-center border border-aegis-border">
               <User className="text-aegis-text-muted w-5 h-5" />
             </div>
           </div>

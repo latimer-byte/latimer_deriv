@@ -70,14 +70,14 @@ export const Funds: React.FC = () => {
       </div>
 
       <div className="flex justify-center">
-        <div className="bg-brand-earth p-1 rounded-2xl border border-aegis-border flex shadow-inner">
+        <div className="bg-aegis-bg p-1 rounded-2xl border border-aegis-border flex shadow-inner">
           <button 
             onClick={() => setActiveTab('deposit')}
             className={cn(
               "px-8 py-3 rounded-xl font-bold transition-all flex items-center gap-2 uppercase tracking-widest text-xs",
               activeTab === 'deposit' 
                 ? "bg-brand-amber text-white shadow-lg shadow-brand-amber/20 neon-glow-red" 
-                : "text-aegis-text-muted hover:bg-brand-forest"
+                : "text-aegis-text-muted hover:bg-aegis-card"
             )}
           >
             <ArrowUpCircle className="w-5 h-5" />
@@ -89,7 +89,7 @@ export const Funds: React.FC = () => {
               "px-8 py-3 rounded-xl font-bold transition-all flex items-center gap-2 uppercase tracking-widest text-xs",
               activeTab === 'withdraw' 
                 ? "bg-brand-amber text-white shadow-lg shadow-brand-amber/20 neon-glow-red" 
-                : "text-aegis-text-muted hover:bg-brand-forest"
+                : "text-aegis-text-muted hover:bg-aegis-card"
             )}
           >
             <ArrowDownCircle className="w-5 h-5" />
@@ -115,7 +115,7 @@ export const Funds: React.FC = () => {
                 <p className="text-[10px] text-aegis-text-muted font-bold uppercase tracking-widest">{method.description}</p>
               </div>
             </div>
-            <div className="w-10 h-10 rounded-full bg-brand-earth flex items-center justify-center text-aegis-text-muted group-hover:bg-brand-amber group-hover:text-white transition-all border border-aegis-border">
+            <div className="w-10 h-10 rounded-full bg-aegis-bg flex items-center justify-center text-aegis-text-muted group-hover:bg-brand-amber group-hover:text-white transition-all border border-aegis-border">
               <ChevronRight className="w-5 h-5" />
             </div>
           </motion.div>
@@ -125,18 +125,18 @@ export const Funds: React.FC = () => {
       {/* Action Modal */}
       <AnimatePresence>
         {selectedMethod && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-earth/80 backdrop-blur-md">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-aegis-bg/80 backdrop-blur-md">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-brand-forest border border-orange-900/20 rounded-3xl p-8 max-w-md w-full shadow-2xl relative overflow-hidden"
+              className="bg-aegis-card border border-orange-900/20 rounded-3xl p-8 max-w-md w-full shadow-2xl relative overflow-hidden"
             >
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-amber to-transparent" />
               
               <button 
                 onClick={() => setSelectedMethod(null)}
-                className="absolute top-4 right-4 p-2 hover:bg-brand-earth rounded-full text-aegis-text-muted hover:text-aegis-text transition-all"
+                className="absolute top-4 right-4 p-2 hover:bg-aegis-bg rounded-full text-aegis-text-muted hover:text-aegis-text transition-all"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -159,7 +159,7 @@ export const Funds: React.FC = () => {
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
                       placeholder="0.00"
-                      className="w-full bg-brand-earth border border-aegis-border rounded-2xl py-4 pl-10 pr-4 text-xl font-bold outline-none focus:ring-2 focus:ring-brand-amber/20 text-aegis-text font-mono placeholder:text-aegis-text-muted"
+                      className="w-full bg-aegis-bg border border-aegis-border rounded-2xl py-4 pl-10 pr-4 text-xl font-bold outline-none focus:ring-2 focus:ring-brand-amber/20 text-aegis-text font-mono placeholder:text-aegis-text-muted"
                     />
                   </div>
 
